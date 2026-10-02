@@ -6,7 +6,7 @@
 		"@fontsource-variable/geist": "^5.3.0",
 		"@fontsource-variable/geist-mono": "^5.3.0",
 		"@lucide/svelte": "^1.49.0",
-		"@sveltejs/adapter-node": "^6.0.0",
+		"@sveltejs/adapter-bun": "^1.0.0",
 		"@sveltejs/kit": "^3.0.0",
 		"@sveltejs/vite-plugin-svelte": "^7.2.0",
 		"@tailwindcss/vite": "^4.3.0",
@@ -15,7 +15,6 @@
 		"bits-ui": "^2.19.4",
 		"cn": "^0.3.0",
 		"drizzle-kit": "^0.31.10",
-		"drizzle-orm": "^0.45.2",
 		"eslint": "^10.4.1",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.19.0",
@@ -55,5 +54,8 @@
 		"start": "bun build/index.js",
 		"db:seed": "bun src/lib/server/db/seed.ts"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"drizzle-orm": "^0.45.3"
+	}
 }

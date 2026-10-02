@@ -13,7 +13,7 @@ Inspired by [office-zeit](https://github.com/nestor-iriondo/office-zeit) by Nest
 | Part       | Choice                            | Note                                        |
 | ---------- | --------------------------------- | ------------------------------------------- |
 | Runtime    | Bun                               | Package manager, dev and production runtime |
-| Framework  | SvelteKit (Svelte 5, TS)          | `adapter-node`, run with Bun                |
+| Framework  | SvelteKit (Svelte 5, TS)          | `adapter-bun`, run with Bun                 |
 | Styling    | Tailwind CSS v4                   | Design tokens as CSS variables              |
 | Components | shadcn-svelte setup + bits-ui     | Own components, own look – see "Design"     |
 | Database   | SQLite + Drizzle ORM              | `bun:sqlite`, one file, no external service |
