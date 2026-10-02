@@ -26,11 +26,11 @@ Bun · SvelteKit (Svelte 5) · Tailwind CSS v4 · bits-ui · SQLite (`bun:sqlite
 
 ## Environment variables
 
-| Variable         | Description                                     |
-| ---------------- | ----------------------------------------------- |
-| `DATABASE_URL`   | Path to the SQLite file, e.g. `./data/dabei.db` |
-| `ADMIN_PASSWORD` | Password for the `/settings` page               |
-| `COOKIE_SECRET`  | Long random string that signs the admin cookie  |
+| Variable         | Description                                               |
+| ---------------- | --------------------------------------------------------- |
+| `DATABASE_URL`   | Path to the SQLite file, e.g. `./data/dabei.db`           |
+| `ADMIN_PASSWORD` | Password for the `/settings` page                         |
+| `COOKIE_SECRET`  | Long random string that signs the admin and login cookies |
 
 Copy `.env.example` to `.env` and fill it in. `.env` is never committed.
 
