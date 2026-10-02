@@ -61,8 +61,8 @@
 
 	<section class="space-y-4">
 		<h2 class="text-2xl font-bold">Typography</h2>
-		<p class="text-4xl font-bold">Geist Sans – Same minimal planner.</p>
-		<p class="text-xl">Geist Sans regular – More range.</p>
+		<p class="text-4xl font-bold">Geist Mono – Who's in, and when.</p>
+		<p class="text-xl">Geist Mono regular – A minimal team planner.</p>
 		<p class="font-mono text-sm">Geist Mono – 09:00-13:00 · Mon 05.10.</p>
 	</section>
 

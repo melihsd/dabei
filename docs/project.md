@@ -1,6 +1,6 @@
 # dabei
 
-**Same minimal planner. More range.**
+**Who's in, and when.**
 
 A small self-hosted planner for teams: everyone marks when they're in – full days or time slots – and can leave a short note on their entry, shown as a chat bubble. One container, one SQLite file, no login.
 
