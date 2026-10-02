@@ -59,7 +59,7 @@ docker compose up -d --build
 
 ## Credit
 
-Inspired by [office-zeit](https://github.com/nestor-iriondo/office-zeit) by Nestor Iriondo. Written from scratch.
+Inspired by [office-zeit](https://github.com/nestoririondo/office-zeit) by Nestor Iriondo. Written from scratch.
 
 ## License
 
