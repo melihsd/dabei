@@ -2,6 +2,7 @@
 	import { Tabs, TabsContent, TabsList, TabsTrigger } from '#lib/components/ui/tabs/index.js';
 	import { Chip } from '#lib/components/ui/chip/index.js';
 	import { Card, CardContent, CardHeader } from '#lib/components/ui/card/index.js';
+	import { Bubble } from '#lib/components/ui/bubble/index.js';
 	import { Button } from '#lib/components/ui/button/index.js';
 	const colors = [
 		'background',
@@ -103,6 +104,20 @@
 			<Chip color="#00b84a">Cem</Chip>
 			<Chip color="#ffd600">Dana</Chip>
 			<Chip color="#a100ff">Eli</Chip>
+		</div>
+	</section>
+
+	<section class="space-y-4">
+		<h2 class="text-2xl font-bold">Bubble</h2>
+		<div class="flex flex-wrap items-start gap-8">
+			<div class="space-y-3">
+				<Bubble>Working from the cafe until noon</Bubble>
+				<Chip color="#0057ff">Ben</Chip>
+			</div>
+			<div class="space-y-3">
+				<Chip color="#00b84a">Cem</Chip>
+				<Bubble tail="up">Late, train delay</Bubble>
+			</div>
 		</div>
 	</section>
 
