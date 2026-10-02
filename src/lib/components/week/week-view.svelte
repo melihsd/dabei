@@ -2,11 +2,13 @@
 	import { enhance } from '$app/forms';
 	import { scale } from 'svelte/transition';
 	import { Card, CardContent, CardHeader } from '#lib/components/ui/card/index.js';
+	import { Bubble } from '#lib/components/ui/bubble/index.js';
 	import { Chip } from '#lib/components/ui/chip/index.js';
+	import CommentEditor from './comment-editor.svelte';
 	import { cn } from '#lib/utils.js';
 	import type { WeekDay } from '#lib/dates.js';
 
-	type Entry = { memberId: number; name: string; color: string };
+	type Entry = { memberId: number; name: string; color: string; comment: string | null };
 
 	type Props = {
 		me: { id: number; name: string; color: string };
@@ -26,7 +28,9 @@
 		const want = pending[`${date}|${slot}`];
 		if (want === undefined) return rows;
 		const others = rows.filter((r) => r.memberId !== me.id);
-		return want ? [...others, { memberId: me.id, name: me.name, color: me.color }] : others;
+		return want
+			? [...others, { memberId: me.id, name: me.name, color: me.color, comment: null }]
+			: others;
 	}
 
 	function isMine(date: string, slot: string) {
@@ -68,8 +72,24 @@
 {#snippet chips(date: string, slot: string)}
 	<div class="flex min-h-16 flex-wrap content-start gap-2 p-3">
 		{#each entries(date, slot) as entry (entry.memberId)}
-			<span out:scale={{ duration: 120, start: 0.8 }}>
-				<Chip color={entry.color} own={entry.memberId === me.id}>{entry.name}</Chip>
+			<span
+				out:scale={{ duration: 120, start: 0.8 }}
+				class="flex max-w-full flex-col items-start gap-2"
+			>
+				{#if entry.comment}
+					<Bubble class="max-w-full">{entry.comment}</Bubble>
+				{/if}
+				{#if entry.memberId === me.id}
+					<CommentEditor
+						{date}
+						{slot}
+						name={entry.name}
+						color={entry.color}
+						comment={entry.comment}
+					/>
+				{:else}
+					<Chip color={entry.color}>{entry.name}</Chip>
+				{/if}
 			</span>
 		{:else}
 			<span class="font-mono text-sm text-muted-foreground">–</span>

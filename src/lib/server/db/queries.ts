@@ -54,3 +54,14 @@ export function togglePresence(memberId: number, date: string, slot: string) {
 		db.insert(presence).values({ memberId, date, slot }).run();
 	}
 }
+
+/** Sets or clears (null) the note on the member's own presence entry. Returns false if there is no entry. */
+export function setComment(memberId: number, date: string, slot: string, comment: string | null) {
+	const updated = db
+		.update(presence)
+		.set({ comment, updatedAt: new Date() })
+		.where(and(eq(presence.memberId, memberId), eq(presence.date, date), eq(presence.slot, slot)))
+		.returning({ id: presence.id })
+		.all();
+	return updated.length > 0;
+}
