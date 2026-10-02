@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Card, CardContent, CardHeader } from '#lib/components/ui/card/index.js';
 	import { Button } from '#lib/components/ui/button/index.js';
 	const colors = [
 		'background',
@@ -75,6 +76,22 @@
 			<Button size="sm">Small</Button>
 			<Button size="icon" aria-label="Add">+</Button>
 			<Button href="/styleguide" variant="outline">As link</Button>
+		</div>
+	</section>
+
+	<section class="space-y-4">
+		<h2 class="text-2xl font-bold">Card</h2>
+		<div class="grid gap-6 sm:grid-cols-2">
+			<Card>
+				<CardHeader>
+					<span class="font-bold uppercase">Mon</span>
+					<span class="font-mono text-sm">05.10.</span>
+				</CardHeader>
+				<CardContent>Default card with header</CardContent>
+			</Card>
+			<Card shadow>
+				<CardContent>Card with hard shadow, no header</CardContent>
+			</Card>
 		</div>
 	</section>
 
