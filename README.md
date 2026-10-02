@@ -37,12 +37,11 @@ Copy `.env.example` to `.env` and fill it in. `.env` is never committed.
 ```sh
 bun install
 cp .env.example .env     # then set ADMIN_PASSWORD and COOKIE_SECRET
-bun run db:migrate       # create the tables
-bun run db:seed          # settings row + 3 placeholder members
-bun run dev
+bun run dev               # migrations run automatically on start
+# optional: bun run db:seed  (3 placeholder members)
 ```
 
-Open `/styleguide` to see the design tokens and components. After changing `src/lib/server/db/schema.ts`, run `bun run db:generate` and commit the new migration in `drizzle/`.
+Open `/styleguide` to see the design tokens and components. After changing `src/lib/server/db/schema.ts`, run `bun run db:generate` and commit the new migration in `drizzle/`. It is applied automatically the next time the server starts.
 
 ## Deploy with Docker
 
@@ -53,7 +52,7 @@ docker compose up -d --build
 ```
 
 - The SQLite file lives on the `dabei-data` volume (`/app/data`). Include it in your backups.
-- Migrations run on every start. Add names in `/settings` after signing in with `ADMIN_PASSWORD`, or let people add themselves.
+- Migrations run automatically on every start. Add names in `/settings` after signing in with `ADMIN_PASSWORD`, or let people add themselves.
 - **Run it behind a TLS-terminating reverse proxy** that sets `X-Forwarded-Proto` and `X-Forwarded-Host`. The Bun adapter assumes HTTPS, and form posts are rejected otherwise.
 - The app has no login for regular use. If the URL is public, protect it with Basic Auth at the proxy.
 
