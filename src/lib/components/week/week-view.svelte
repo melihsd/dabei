@@ -149,7 +149,7 @@
 					<div
 						class={cn(
 							'relative flex min-h-24 flex-col gap-3 p-3',
-							mine ? 'bg-foreground text-background' : 'bg-muted'
+							mine ? 'bg-foreground text-background' : 'bg-background'
 						)}
 					>
 						{@render overlay(day.iso, slot, `${day.label} ${slot}`, mine)}
