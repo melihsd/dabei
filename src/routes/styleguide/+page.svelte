@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { ColorPicker } from '#lib/components/ui/color-picker/index.js';
+	import { Input } from '#lib/components/ui/input/index.js';
+	import { Switch } from '#lib/components/ui/switch/index.js';
 	import { Popover, PopoverContent, PopoverTrigger } from '#lib/components/ui/popover/index.js';
 	import { Textarea } from '#lib/components/ui/textarea/index.js';
 	import { Tabs, TabsContent, TabsList, TabsTrigger } from '#lib/components/ui/tabs/index.js';
@@ -22,6 +25,8 @@
 
 	let week = $state('this');
 	let note = $state('');
+	let color = $state('#FF3B00');
+	let on = $state(true);
 	let dark = $state(false);
 
 	function toggleDark() {
@@ -107,6 +112,18 @@
 			<Chip color="#00b84a">Cem</Chip>
 			<Chip color="#ffd600">Dana</Chip>
 			<Chip color="#a100ff">Eli</Chip>
+		</div>
+	</section>
+
+	<section class="space-y-4">
+		<h2 class="text-2xl font-bold">Input, Switch, ColorPicker</h2>
+		<div class="max-w-sm space-y-4">
+			<Input placeholder="Name" />
+			<div class="flex items-center gap-3">
+				<Switch bind:checked={on} aria-label="Active" />
+				<span class="font-mono text-sm">{on ? 'active' : 'inactive'}</span>
+			</div>
+			<ColorPicker name="color" bind:value={color} />
 		</div>
 	</section>
 
