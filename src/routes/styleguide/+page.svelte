@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Tabs, TabsContent, TabsList, TabsTrigger } from '#lib/components/ui/tabs/index.js';
 	import { Chip } from '#lib/components/ui/chip/index.js';
 	import { Card, CardContent, CardHeader } from '#lib/components/ui/card/index.js';
 	import { Button } from '#lib/components/ui/button/index.js';
@@ -16,6 +17,7 @@
 		'ring'
 	];
 
+	let week = $state('this');
 	let dark = $state(false);
 
 	function toggleDark() {
@@ -78,6 +80,19 @@
 			<Button size="icon" aria-label="Add">+</Button>
 			<Button href="/styleguide" variant="outline">As link</Button>
 		</div>
+	</section>
+
+	<section class="space-y-4">
+		<h2 class="text-2xl font-bold">Tabs</h2>
+		<Tabs bind:value={week}>
+			<TabsList>
+				<TabsTrigger value="this">This week</TabsTrigger>
+				<TabsTrigger value="next">Next week</TabsTrigger>
+				<TabsTrigger value="past" disabled>Past</TabsTrigger>
+			</TabsList>
+			<TabsContent value="this">Content of this week</TabsContent>
+			<TabsContent value="next">Content of next week</TabsContent>
+		</Tabs>
 	</section>
 
 	<section class="space-y-4">
