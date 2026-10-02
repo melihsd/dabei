@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto, invalidateAll } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import { Chip } from '#lib/components/ui/chip/index.js';
 	import { Tabs, TabsList, TabsTrigger } from '#lib/components/ui/tabs/index.js';
@@ -47,6 +48,7 @@
 			</Tabs>
 			<div class="flex items-center gap-3">
 				<Chip color={data.member.color} own>{data.member.name}</Chip>
+				<Button href={resolve('/settings')} variant="outline" size="sm">Settings</Button>
 				<form method="POST" action="?/switch" use:enhance>
 					<Button type="submit" variant="outline" size="sm">Not you?</Button>
 				</form>

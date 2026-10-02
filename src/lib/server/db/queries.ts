@@ -65,3 +65,22 @@ export function setComment(memberId: number, date: string, slot: string, comment
 		.all();
 	return updated.length > 0;
 }
+
+export function getAllMembers() {
+	return db.select().from(members).orderBy(asc(members.sortOrder), asc(members.id)).all();
+}
+
+export function createMember(values: { name: string; color: string; sortOrder: number }) {
+	db.insert(members).values(values).run();
+}
+
+export function updateMember(
+	id: number,
+	values: { name: string; color: string; sortOrder: number; active: boolean }
+) {
+	db.update(members).set(values).where(eq(members.id, id)).run();
+}
+
+export function updateSettings(values: { mode: 'day' | 'slots'; slots: string; workdays: string }) {
+	db.update(settings).set(values).where(eq(settings.id, 1)).run();
+}
