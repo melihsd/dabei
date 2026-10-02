@@ -32,7 +32,7 @@ description: Build or restyle a UI component for dabei in the brutalist black/wh
 
 4. **Apply the design rules**
    - No `rounded-*`. Radius comes from `--radius: 0`.
-   - Border: `border-2 border-foreground`.
+   - Border: `border border-foreground` (1px).
    - Colors only from tokens (`bg-background`, `text-foreground`, …). Member colors come in as a prop, set via `style="--chip: {color}"`.
    - Hover/active: invert (black ↔ white) or hard offset shadow – never opacity fades or blur.
    - Focus: visible 2px outline with offset, never removed.
