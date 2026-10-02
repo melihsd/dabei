@@ -50,9 +50,10 @@
 		"format": "prettier --write .",
 		"db:push": "bunx drizzle-kit push",
 		"db:generate": "bunx drizzle-kit generate",
-		"db:migrate": "bunx drizzle-kit migrate",
+		"db:migrate": "bun src/lib/server/db/migrate.ts",
 		"db:studio": "bunx drizzle-kit studio",
-		"start": "bun build/index.js"
+		"start": "bun build/index.js",
+		"db:seed": "bun src/lib/server/db/seed.ts"
 	},
 	"type": "module"
 }
