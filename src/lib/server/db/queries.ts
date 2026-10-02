@@ -1,6 +1,6 @@
-import { and, asc, eq } from 'drizzle-orm';
+import { and, asc, eq, gte, lte } from 'drizzle-orm';
 import { db } from './index';
-import { members, settings } from './schema';
+import { members, presence, settings } from './schema';
 
 export function getSettings() {
 	return db.select().from(settings).where(eq(settings.id, 1)).get();
@@ -21,4 +21,36 @@ export function getActiveMember(id: number) {
 		.from(members)
 		.where(and(eq(members.id, id), eq(members.active, true)))
 		.get();
+}
+
+export function getPresenceBetween(from: string, to: string) {
+	return db
+		.select({
+			id: presence.id,
+			memberId: presence.memberId,
+			date: presence.date,
+			slot: presence.slot,
+			comment: presence.comment,
+			name: members.name,
+			color: members.color
+		})
+		.from(presence)
+		.innerJoin(members, eq(members.id, presence.memberId))
+		.where(and(gte(presence.date, from), lte(presence.date, to)))
+		.orderBy(asc(members.sortOrder), asc(members.id))
+		.all();
+}
+
+/** Adds the presence entry, or removes it if it already exists. */
+export function togglePresence(memberId: number, date: string, slot: string) {
+	const existing = db
+		.select({ id: presence.id })
+		.from(presence)
+		.where(and(eq(presence.memberId, memberId), eq(presence.date, date), eq(presence.slot, slot)))
+		.get();
+	if (existing) {
+		db.delete(presence).where(eq(presence.id, existing.id)).run();
+	} else {
+		db.insert(presence).values({ memberId, date, slot }).run();
+	}
 }
