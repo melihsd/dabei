@@ -1,56 +1,66 @@
-# sv
+# dabei
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+**Same minimal planner. More range.**
 
-## Creating a project
+A small self-hosted planner for teams: everyone marks when they're in – full days or time slots – and can leave a short note on their entry, shown as a chat bubble. One container, one SQLite file, no login.
 
-If you're seeing this, you've probably already done this step. Congrats!
+<!-- TODO: add a screenshot, e.g. docs/screenshot.png -->
 
-```sh
-# create a new project
-npx sv create my-app
-```
+![Screenshot placeholder](docs/screenshot.png)
 
-To recreate this project with the same configuration:
+## Features
 
-```sh
-# recreate this project
-bun x sv@1.0.1 create --template minimal --types ts --add ai-tools="ide:other" drizzle="database:sqlite+sqlite:bun-sqlite" sveltekit-adapter="adapter:bun" tailwindcss="plugins:none" prettier eslint --install bun .
-```
+- **Two modes:** full days, or time slots such as `09:00-13:00` (a global setting)
+- **Week view:** one card per workday, this week and next week (from Sunday on, next week is the default)
+- **One tap to toggle** your presence, with optimistic updates and a refresh every 30 s
+- **Notes:** one optional note per entry (max 140 characters), shown as a chat bubble on your chip
+- **In-app settings:** team members (name, color, order, active), mode, slots and workdays, behind an admin password
+- **No accounts:** pick your name once, remembered in a cookie
+- **Brutalist design:** black and white, hard edges, light and dark mode
 
-## Adding features
+## Stack
 
-Add features to your project with `sv add`:
+Bun · SvelteKit (Svelte 5) · Tailwind CSS v4 · bits-ui · SQLite (`bun:sqlite`) with Drizzle ORM · Docker Compose
 
-```sh
-npx sv add
-```
+## Environment variables
 
-For example, to add Tailwind CSS:
+| Variable         | Description                                     |
+| ---------------- | ----------------------------------------------- |
+| `DATABASE_URL`   | Path to the SQLite file, e.g. `./data/dabei.db` |
+| `ADMIN_PASSWORD` | Password for the `/settings` page               |
+| `COOKIE_SECRET`  | Long random string that signs the admin cookie  |
 
-```sh
-npx sv add tailwindcss
-```
+Copy `.env.example` to `.env` and fill it in. `.env` is never committed.
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Development
 
 ```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+bun install
+cp .env.example .env     # then set ADMIN_PASSWORD and COOKIE_SECRET
+bun run db:migrate       # create the tables
+bun run db:seed          # settings row + 3 placeholder members
+bun run dev
 ```
 
-## Building
+Open `/styleguide` to see the design tokens and components. After changing `src/lib/server/db/schema.ts`, run `bun run db:generate` and commit the new migration in `drizzle/`.
 
-To create a production version of your app:
+## Deploy with Docker
 
 ```sh
-npm run build
+export ADMIN_PASSWORD=change-me
+export COOKIE_SECRET=$(openssl rand -hex 32)
+docker compose up -d --build
 ```
 
-You can preview the production build with `npm run preview`.
+- The SQLite file lives on the `dabei-data` volume (`/app/data`). Include it in your backups.
+- Migrations run on every start. Add your team in `/settings` after signing in with `ADMIN_PASSWORD`.
+- **Run it behind a TLS-terminating reverse proxy** that sets `X-Forwarded-Proto` and `X-Forwarded-Host`. The Bun adapter assumes HTTPS, and form posts are rejected otherwise.
+- The app has no login for regular use. If the URL is public, protect it with Basic Auth at the proxy.
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+## Credit
+
+Inspired by [office-zeit](https://github.com/nestor-iriondo/office-zeit) by Nestor Iriondo. Written from scratch.
+
+## License
+
+MIT
