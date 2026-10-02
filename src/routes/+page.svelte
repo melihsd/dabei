@@ -53,7 +53,13 @@
 			</div>
 		</header>
 
-		<WeekView me={data.member} days={data.days} presence={data.presence} />
+		<WeekView
+			me={data.member}
+			mode={data.mode}
+			slots={data.slots}
+			days={data.days}
+			presence={data.presence}
+		/>
 
 		{#if form?.error}
 			<p class="font-bold text-destructive">{form.error}</p>
