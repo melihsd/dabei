@@ -14,8 +14,8 @@ A small self-hosted planner for teams: everyone marks when they're in – full d
 - **Week view:** one card per workday, this week and next week (from Sunday on, next week is the default)
 - **One tap to toggle** your presence, with optimistic updates and a refresh every 30 s
 - **Notes:** one optional note per entry (max 140 characters), shown as a chat bubble on your chip
-- **In-app settings:** team members (name, color, order, active), mode, slots and workdays, behind an admin password
-- **No accounts:** pick your name once, remembered in a cookie
+- **In-app settings:** mode, slots, workdays and the list of names (add / remove), behind an admin password
+- **No accounts:** pick your name or add yourself, choose your own color, remembered in a cookie
 - **Brutalist design:** black and white, hard edges, light and dark mode
 
 ## Stack
@@ -53,7 +53,7 @@ docker compose up -d --build
 ```
 
 - The SQLite file lives on the `dabei-data` volume (`/app/data`). Include it in your backups.
-- Migrations run on every start. Add your team in `/settings` after signing in with `ADMIN_PASSWORD`.
+- Migrations run on every start. Add names in `/settings` after signing in with `ADMIN_PASSWORD`, or let people add themselves.
 - **Run it behind a TLS-terminating reverse proxy** that sets `X-Forwarded-Proto` and `X-Forwarded-Host`. The Bun adapter assumes HTTPS, and form posts are rejected otherwise.
 - The app has no login for regular use. If the URL is public, protect it with Basic Auth at the proxy.
 

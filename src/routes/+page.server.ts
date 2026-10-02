@@ -1,12 +1,16 @@
 import { fail, redirect } from '@sveltejs/kit';
 import {
 	getActiveMember,
+	createMember,
 	getActiveMembers,
+	memberNameExists,
 	getPresenceBetween,
 	getSettings,
 	setComment,
-	togglePresence
+	togglePresence,
+	updateMemberColor
 } from '#lib/server/db/queries.js';
+import { isValidColor, parseMemberName } from '#lib/settings.js';
 import type { Settings } from '#lib/server/db/schema.js';
 import { clearMemberCookie, setMemberCookie } from '#lib/server/identity.js';
 import {
@@ -18,7 +22,7 @@ import {
 	weekMonday,
 	type WeekKey
 } from '#lib/dates.js';
-import { MAX_COMMENT_LENGTH } from '#lib/constants.js';
+import { MAX_COMMENT_LENGTH, MAX_NAME_LENGTH } from '#lib/constants.js';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = ({ locals, url }) => {
@@ -55,6 +59,31 @@ export const actions: Actions = {
 
 		setMemberCookie(cookies, member.id);
 		redirect(303, '/');
+	},
+
+	register: async ({ request, cookies }) => {
+		const data = await request.formData();
+		const name = parseMemberName(data.get('name'));
+		const color = String(data.get('color') ?? '');
+
+		if (!name) return fail(400, { error: `Name must be 1-${MAX_NAME_LENGTH} characters.` });
+		if (!isValidColor(color)) return fail(400, { error: 'Pick a color.' });
+		if (memberNameExists(name)) {
+			return fail(400, { error: 'That name is taken. Pick it from the list above.' });
+		}
+
+		setMemberCookie(cookies, createMember(name, color).id);
+		redirect(303, '/');
+	},
+
+	color: async ({ request, locals }) => {
+		if (!locals.member) return fail(401, { error: 'Pick your name first.' });
+
+		const color = String((await request.formData()).get('color') ?? '');
+		if (!isValidColor(color)) return fail(400, { error: 'Pick a color.' });
+
+		updateMemberColor(locals.member.id, color);
+		return { ok: true };
 	},
 
 	switch: ({ cookies }) => {

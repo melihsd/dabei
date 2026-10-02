@@ -2,12 +2,19 @@
 	import { enhance } from '$app/forms';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import { ColorPicker } from '#lib/components/ui/color-picker/index.js';
+	import { Input } from '#lib/components/ui/input/index.js';
+	import { Popover, PopoverContent, PopoverTrigger } from '#lib/components/ui/popover/index.js';
+	import { MAX_NAME_LENGTH } from '#lib/constants.js';
 	import { Chip } from '#lib/components/ui/chip/index.js';
 	import { Tabs, TabsList, TabsTrigger } from '#lib/components/ui/tabs/index.js';
 	import ThemeToggle from '#lib/components/theme-toggle.svelte';
 	import WeekView from '#lib/components/week/week-view.svelte';
 
 	let { data, form } = $props();
+
+	let colorOpen = $state(false);
 
 	// Live updates: refresh every 30 s while the tab is visible.
 	$effect(() => {
@@ -20,20 +27,47 @@
 
 <main class="space-y-8 p-4 sm:p-8">
 	{#if !data.member}
-		<section class="space-y-6">
-			<h1 class="text-4xl font-bold tracking-tight">Who are you?</h1>
-			<form method="POST" action="?/pick" use:enhance class="flex flex-wrap gap-3">
-				{#each data.members as member (member.id)}
-					<button
-						type="submit"
-						name="memberId"
-						value={member.id}
-						class="cursor-pointer hover:shadow-hard"
-					>
-						<Chip color={member.color} class="min-h-11 px-4 text-base">{member.name}</Chip>
-					</button>
-				{/each}
-			</form>
+		<section class="mx-auto max-w-2xl space-y-8">
+			{#if data.members.length > 0}
+				<div class="space-y-6">
+					<h1 class="text-4xl font-bold tracking-tight">Who are you?</h1>
+					<form method="POST" action="?/pick" use:enhance class="flex flex-wrap gap-3">
+						{#each data.members as member (member.id)}
+							<button
+								type="submit"
+								name="memberId"
+								value={member.id}
+								class="cursor-pointer"
+								aria-label={member.name}
+							>
+								<Chip color={member.color} own>{member.name}</Chip>
+							</button>
+						{/each}
+					</form>
+				</div>
+			{/if}
+
+			<div class="space-y-4">
+				<h2
+					class={data.members.length > 0
+						? 'text-xl font-bold'
+						: 'text-4xl font-bold tracking-tight'}
+				>
+					{data.members.length > 0 ? 'Not in the list?' : 'Add your name'}
+				</h2>
+				<form method="POST" action="?/register" use:enhance class="max-w-sm space-y-4">
+					<Input
+						name="name"
+						maxlength={MAX_NAME_LENGTH}
+						placeholder="Your name"
+						aria-label="Your name"
+						required
+					/>
+					<ColorPicker name="color" />
+					<Button type="submit">Join</Button>
+				</form>
+			</div>
+
 			{#if form?.error}
 				<p class="font-bold text-destructive">{form.error}</p>
 			{/if}
@@ -46,10 +80,29 @@
 				<a href={resolve('/settings')} class="text-muted-foreground hover:text-foreground">
 					Settings
 				</a>
-				<span class="flex items-center gap-2">
-					<span class="size-4" style="background: {data.member.color}"></span>
-					<span class="text-muted-foreground">{data.member.name}</span>
-				</span>
+				<Popover bind:open={colorOpen}>
+					<PopoverTrigger
+						class="flex cursor-pointer items-center gap-2"
+						aria-label="Change your color"
+					>
+						<span class="size-4" style="background: {data.member.color}"></span>
+						<span class="text-muted-foreground">{data.member.name}</span>
+					</PopoverTrigger>
+					<PopoverContent class="w-auto">
+						<form
+							method="POST"
+							action="?/color"
+							use:enhance={() =>
+								async ({ update }) => {
+									await update({ reset: false });
+									colorOpen = false;
+								}}
+							onchange={(e) => e.currentTarget.requestSubmit()}
+						>
+							<ColorPicker name="color" value={data.member.color} />
+						</form>
+					</PopoverContent>
+				</Popover>
 				<form method="POST" action="?/switch" use:enhance>
 					<button
 						type="submit"

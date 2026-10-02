@@ -10,11 +10,13 @@ import {
 	createMember,
 	getAllMembers,
 	getSettings,
-	updateMember,
+	deleteMember,
+	memberNameExists,
 	updateSettings
 } from '#lib/server/db/queries.js';
 import { WEEKDAYS } from '#lib/dates.js';
-import { MAX_NAME_LENGTH, isValidColor, isValidSlot, isWeekday } from '#lib/settings.js';
+import { MAX_NAME_LENGTH, MEMBER_COLORS } from '#lib/constants.js';
+import { isValidSlot, isWeekday, parseMemberName } from '#lib/settings.js';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = ({ cookies }) => {
@@ -26,19 +28,6 @@ export const load: PageServerLoad = ({ cookies }) => {
 		members: getAllMembers()
 	};
 };
-
-function readMemberFields(data: FormData) {
-	const name = String(data.get('name') ?? '').trim();
-	const color = String(data.get('color') ?? '');
-	const sortOrder = Number(data.get('sortOrder') ?? 0);
-
-	if (!name || name.length > MAX_NAME_LENGTH) {
-		return { error: `Name must be 1-${MAX_NAME_LENGTH} characters.` };
-	}
-	if (!isValidColor(color)) return { error: 'Pick a color.' };
-	if (!Number.isInteger(sortOrder)) return { error: 'Order must be a whole number.' };
-	return { values: { name, color, sortOrder } };
-}
 
 export const actions: Actions = {
 	login: async ({ request, cookies }) => {
@@ -94,24 +83,24 @@ export const actions: Actions = {
 	addMember: async ({ request, cookies }) => {
 		if (!isAdmin(cookies)) return fail(401, { scope: 'new', error: 'Not signed in.' });
 
-		const fields = readMemberFields(await request.formData());
-		if (!fields.values) return fail(400, { scope: 'new', error: fields.error });
+		const name = parseMemberName((await request.formData()).get('name'));
+		if (!name) {
+			return fail(400, { scope: 'new', error: `Name must be 1-${MAX_NAME_LENGTH} characters.` });
+		}
+		if (memberNameExists(name)) return fail(400, { scope: 'new', error: 'That name exists.' });
 
-		createMember(fields.values);
+		// The person picks their own color later; start with the next one in the palette.
+		createMember(name, MEMBER_COLORS[getAllMembers().length % MEMBER_COLORS.length]);
 		return { scope: 'new', saved: true };
 	},
 
-	updateMember: async ({ request, cookies }) => {
+	removeMember: async ({ request, cookies }) => {
 		if (!isAdmin(cookies)) return fail(401, { scope: 'member', error: 'Not signed in.' });
 
-		const data = await request.formData();
-		const id = Number(data.get('id'));
-		const fields = readMemberFields(data);
-		if (!Number.isInteger(id) || !fields.values) {
-			return fail(400, { scope: 'member', id, error: fields.error ?? 'Invalid member.' });
-		}
+		const id = Number((await request.formData()).get('id'));
+		if (!Number.isInteger(id)) return fail(400, { scope: 'member', error: 'Invalid member.' });
 
-		updateMember(id, { ...fields.values, active: data.get('active') === 'on' });
-		return { scope: 'member', id, saved: true };
+		deleteMember(id);
+		return { scope: 'member', saved: true };
 	}
 };

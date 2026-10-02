@@ -1,6 +1,5 @@
+import { MAX_NAME_LENGTH } from './constants.js';
 import { WEEKDAYS, type Weekday } from './dates.js';
-
-export const MAX_NAME_LENGTH = 20;
 
 const SLOT_PATTERN = /^([01]\d|2[0-3]):[0-5]\d-([01]\d|2[0-3]):[0-5]\d$/;
 
@@ -17,4 +16,10 @@ export function isValidColor(color: string) {
 
 export function isWeekday(value: string): value is Weekday {
 	return (WEEKDAYS as readonly string[]).includes(value);
+}
+
+/** Trimmed name if it is 1..MAX_NAME_LENGTH characters, otherwise null. */
+export function parseMemberName(raw: FormDataEntryValue | null): string | null {
+	const name = String(raw ?? '').trim();
+	return name && name.length <= MAX_NAME_LENGTH ? name : null;
 }

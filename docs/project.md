@@ -52,7 +52,7 @@ Why Drizzle instead of Prisma: lighter, no query engine binary or native addon i
 
 ### Settings (in-app, stored in SQLite)
 
-- Team members: name, color, order, active/inactive
+- Team names: add and remove (removing deletes the person's entries). No color or order here
 - Mode: `day` / `slots`
 - Slots: list of time windows, e.g. `09:00-13:00`, `13:00-18:00`
 - Workdays: any subset of Mon–Sun
@@ -60,7 +60,8 @@ Why Drizzle instead of Prisma: lighter, no query engine binary or native addon i
 
 ### Onboarding
 
-- First visit: "Who are you?" – pick name from active members
+- First visit: "Who are you?" – pick a name from the list, or add yourself (name + color) if you're not in it
+- Everyone chooses their own color and can change it any time via the color square in the header
 - Member id stored in a cookie (long-lived, httpOnly)
 - "Not you?" link to switch
 

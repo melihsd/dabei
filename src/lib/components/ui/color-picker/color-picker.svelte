@@ -1,21 +1,6 @@
 <script lang="ts">
+	import { MEMBER_COLORS as SWATCHES } from '#lib/constants.js';
 	import { cn } from '#lib/utils.js';
-
-	// Saturated swatches to pick from; the chosen value is stored on the member.
-	const SWATCHES = [
-		'#FF3B00',
-		'#FF7A00',
-		'#FFC800',
-		'#9ACD00',
-		'#00B84A',
-		'#00B8A9',
-		'#00A3FF',
-		'#0057FF',
-		'#5B2BFF',
-		'#A100FF',
-		'#FF00A8',
-		'#E0003C'
-	];
 
 	type Props = { name: string; value?: string; class?: string };
 

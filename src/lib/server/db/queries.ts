@@ -1,4 +1,4 @@
-import { and, asc, eq, gte, lte } from 'drizzle-orm';
+import { and, asc, desc, eq, gte, lte } from 'drizzle-orm';
 import { db } from './index';
 import { members, presence, settings } from './schema';
 
@@ -70,15 +70,30 @@ export function getAllMembers() {
 	return db.select().from(members).orderBy(asc(members.sortOrder), asc(members.id)).all();
 }
 
-export function createMember(values: { name: string; color: string; sortOrder: number }) {
-	db.insert(members).values(values).run();
+export function createMember(name: string, color: string) {
+	const last = db
+		.select({ order: members.sortOrder })
+		.from(members)
+		.orderBy(desc(members.sortOrder))
+		.get();
+	return db
+		.insert(members)
+		.values({ name, color, sortOrder: (last?.order ?? -1) + 1 })
+		.returning()
+		.get();
 }
 
-export function updateMember(
-	id: number,
-	values: { name: string; color: string; sortOrder: number; active: boolean }
-) {
-	db.update(members).set(values).where(eq(members.id, id)).run();
+export function memberNameExists(name: string) {
+	return getAllMembers().some((m) => m.name.toLowerCase() === name.toLowerCase());
+}
+
+export function updateMemberColor(id: number, color: string) {
+	db.update(members).set({ color }).where(eq(members.id, id)).run();
+}
+
+/** Removes the member; their presence entries are deleted with them (foreign key cascade). */
+export function deleteMember(id: number) {
+	db.delete(members).where(eq(members.id, id)).run();
 }
 
 export function updateSettings(values: { mode: 'day' | 'slots'; slots: string; workdays: string }) {

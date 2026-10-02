@@ -2,13 +2,10 @@
 	import { enhance } from '$app/forms';
 	import { resolve } from '$app/paths';
 	import { Button } from '#lib/components/ui/button/index.js';
-	import { Card, CardContent, CardHeader } from '#lib/components/ui/card/index.js';
-	import { ColorPicker } from '#lib/components/ui/color-picker/index.js';
 	import { Input } from '#lib/components/ui/input/index.js';
-	import { Switch } from '#lib/components/ui/switch/index.js';
 	import { Textarea } from '#lib/components/ui/textarea/index.js';
 	import { WEEKDAYS, parseSlots, parseWorkdays } from '#lib/dates.js';
-	import { MAX_NAME_LENGTH } from '#lib/settings.js';
+	import { MAX_NAME_LENGTH } from '#lib/constants.js';
 
 	let { data, form } = $props();
 
@@ -116,69 +113,50 @@
 		</section>
 
 		<section class="space-y-4">
-			<h2 class="text-2xl font-bold">Team members</h2>
-			<div class="space-y-4">
+			<h2 class="text-2xl font-bold">Team names</h2>
+			<p class="text-sm text-muted-foreground">
+				People pick their name on their first visit and choose their own color. They can also add
+				themselves.
+			</p>
+			<ul class="max-w-md divide-y divide-foreground border border-foreground">
 				{#each data.members as member (member.id)}
-					<Card>
-						<CardHeader>
+					<li class="flex items-center justify-between gap-3 p-3">
+						<span class="flex items-center gap-3">
+							<span class="size-4" style="background: {member.color}"></span>
 							<span class="font-bold">{member.name}</span>
-							<span class="font-mono text-xs text-muted-foreground">
-								{member.active ? 'active' : 'inactive'}
-							</span>
-						</CardHeader>
-						<CardContent>
-							<form
-								method="POST"
-								action="?/updateMember"
-								use:enhance={() =>
-									({ update }) =>
-										update({ reset: false })}
-								class="space-y-4"
-							>
-								<input type="hidden" name="id" value={member.id} />
-								<div class="grid gap-4 sm:grid-cols-[1fr_6rem]">
-									<label class="space-y-1">
-										<span class="font-mono text-xs font-bold uppercase">Name</span>
-										<Input name="name" value={member.name} maxlength={MAX_NAME_LENGTH} required />
-									</label>
-									<label class="space-y-1">
-										<span class="font-mono text-xs font-bold uppercase">Order</span>
-										<Input type="number" name="sortOrder" value={member.sortOrder} step="1" />
-									</label>
-								</div>
-								<ColorPicker name="color" value={member.color} />
-								<label class="flex items-center gap-3">
-									<Switch name="active" checked={member.active} />
-									<span class="font-mono text-sm">Active</span>
-								</label>
-								{#if form?.scope === 'member' && form.id === member.id}
-									{#if 'error' in form}
-										<p class="font-bold text-destructive">{form.error}</p>
-									{:else}
-										<p class="font-mono text-sm font-bold">Saved.</p>
-									{/if}
-								{/if}
-								<Button type="submit" size="sm">Save</Button>
-							</form>
-						</CardContent>
-					</Card>
+						</span>
+						<form
+							method="POST"
+							action="?/removeMember"
+							use:enhance={({ cancel }) => {
+								if (!confirm(`Remove ${member.name} and all their entries?`)) cancel();
+								return ({ update }) => update({ reset: false });
+							}}
+						>
+							<input type="hidden" name="id" value={member.id} />
+							<Button type="submit" variant="destructive" size="sm">Remove</Button>
+						</form>
+					</li>
+				{:else}
+					<li class="p-3 text-sm text-muted-foreground">No names yet.</li>
 				{/each}
-			</div>
+			</ul>
 		</section>
 
 		<section class="space-y-4">
-			<h2 class="text-2xl font-bold">Add member</h2>
+			<h2 class="text-2xl font-bold">Add name</h2>
 			<form method="POST" action="?/addMember" use:enhance class="max-w-md space-y-4">
-				<label class="block space-y-1">
-					<span class="font-mono text-xs font-bold uppercase">Name</span>
-					<Input name="name" maxlength={MAX_NAME_LENGTH} required />
-				</label>
-				<input type="hidden" name="sortOrder" value={data.members.length} />
-				<ColorPicker name="color" />
-				{#if form?.scope === 'new' && form.error}
+				<Input
+					name="name"
+					maxlength={MAX_NAME_LENGTH}
+					placeholder="Name"
+					aria-label="Name"
+					required
+				/>
+				{#if form?.scope === 'new' && 'error' in form}
 					<p class="font-bold text-destructive">{form.error}</p>
 				{/if}
-				<Button type="submit">Add member</Button>
+				<Button type="submit">Add name</Button>
 			</form>
 		</section>
 	{/if}
