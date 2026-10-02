@@ -12,10 +12,9 @@
 		name: string;
 		color: string;
 		comment: string | null;
-		onInverted?: boolean;
 	};
 
-	let { date, slot, name, color, comment, onInverted = false }: Props = $props();
+	let { date, slot, name, color, comment }: Props = $props();
 
 	let open = $state(false);
 	let text = $state('');
@@ -31,7 +30,7 @@
 	}}
 >
 	<PopoverTrigger class="cursor-pointer" aria-label="Edit your note">
-		<Chip {color} own {onInverted}>{name}</Chip>
+		<Chip {color} own note={Boolean(comment)}>{name}</Chip>
 	</PopoverTrigger>
 	<PopoverContent>
 		<form

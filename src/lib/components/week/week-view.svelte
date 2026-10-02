@@ -22,6 +22,9 @@
 	/** Optimistic overlay: key "date|slot" -> whether my entry should currently show. */
 	let pending = $state<Record<string, boolean>>({});
 
+	/** Note currently shown by a tap (touch screens have no hover). */
+	let shownNote = $state<string | null>(null);
+
 	function entries(date: string, slot: string): Entry[] {
 		const rows = presence.filter((p) => p.date === date && p.slot === slot);
 		const want = pending[`${date}|${slot}`];
@@ -46,46 +49,20 @@
 	}
 </script>
 
-{#snippet overlay(date: string, slot: string, label: string, mine: boolean)}
-	<form
-		method="POST"
-		action="?/toggle"
-		use:enhance={() => submit(date, slot)}
-		class="absolute inset-0"
-	>
-		<input type="hidden" name="date" value={date} />
-		<input type="hidden" name="slot" value={slot} />
-		<button
-			type="submit"
-			aria-pressed={mine}
-			aria-label={label}
-			class={cn(
-				'group absolute inset-0 cursor-pointer motion-safe:transition-colors motion-safe:duration-150',
-				mine ? 'hover:bg-background/10' : 'hover:bg-foreground/5'
-			)}
-		>
-			<span
-				aria-hidden="true"
-				class={cn(
-					'absolute top-3 right-4 text-2xl leading-none font-black opacity-0 group-hover:opacity-100 motion-safe:transition-opacity motion-safe:duration-150',
-					mine ? 'text-background/60' : 'text-foreground/30'
-				)}
-			>
-				{mine ? '−' : '+'}
-			</span>
-		</button>
-	</form>
-{/snippet}
-
-{#snippet chips(date: string, slot: string, mine: boolean)}
-	<div class="pointer-events-none relative mt-auto flex flex-wrap gap-2 pt-4">
+{#snippet chips(date: string, slot: string)}
+	<div class="pointer-events-none relative flex flex-wrap gap-2">
 		{#each entries(date, slot) as entry (entry.memberId)}
-			<span
-				out:scale={{ duration: 120, start: 0.8 }}
-				class="pointer-events-auto flex max-w-full flex-col items-start gap-2"
-			>
+			{@const noteKey = `${date}|${slot}|${entry.memberId}`}
+			<span out:scale={{ duration: 120, start: 0.8 }} class="group pointer-events-auto relative">
 				{#if entry.comment}
-					<Bubble class="max-w-full">{entry.comment}</Bubble>
+					<Bubble
+						class={cn(
+							'pointer-events-none absolute bottom-full left-0 z-30 mb-2 hidden w-max max-w-56 text-foreground group-hover:block group-has-[[data-state=open]]:hidden',
+							shownNote === noteKey && 'block'
+						)}
+					>
+						{entry.comment}
+					</Bubble>
 				{/if}
 				{#if entry.memberId === me.id}
 					<CommentEditor
@@ -94,10 +71,20 @@
 						name={entry.name}
 						color={entry.color}
 						comment={entry.comment}
-						onInverted={mine}
 					/>
+				{:else if entry.comment}
+					<!-- Hover shows the note; a tap toggles it on touch screens. -->
+					<button
+						type="button"
+						class="cursor-default"
+						aria-label={`${entry.name}: ${entry.comment}`}
+						onclick={() => (shownNote = shownNote === noteKey ? null : noteKey)}
+						onblur={() => (shownNote = null)}
+					>
+						<Chip color={entry.color} note>{entry.name}</Chip>
+					</button>
 				{:else}
-					<Chip color={entry.color} onInverted={mine}>{entry.name}</Chip>
+					<Chip color={entry.color}>{entry.name}</Chip>
 				{/if}
 			</span>
 		{/each}
@@ -112,36 +99,56 @@
 			{@const mine = isMine(day.iso, '')}
 			<div
 				class={cn(
-					'relative flex min-h-64 min-w-36 flex-1 flex-col gap-2 p-5',
+					'relative flex min-h-40 min-w-36 flex-1 flex-col gap-3 p-4',
 					mine ? 'bg-foreground text-background' : 'bg-background'
 				)}
 			>
-				{@render overlay(day.iso, '', `${day.label} ${day.dateLabel}`, mine)}
+				<form method="POST" action="?/toggle" use:enhance={() => submit(day.iso, '')}>
+					<input type="hidden" name="date" value={day.iso} />
+					<input type="hidden" name="slot" value="" />
+					<button
+						type="submit"
+						aria-pressed={mine}
+						aria-label={`${day.label} ${day.dateLabel}`}
+						class={cn(
+							'absolute inset-0 cursor-pointer motion-safe:transition-colors motion-safe:duration-100',
+							mine ? 'hover:bg-background/10' : 'hover:bg-foreground/5'
+						)}
+					></button>
+				</form>
 				<div class="pointer-events-none relative">
-					<div class="text-5xl leading-none font-black">{day.label}</div>
-					<div class={cn('mt-2 text-xs', mine ? 'text-background/60' : 'text-muted-foreground')}>
+					<div class="text-2xl leading-none font-bold">{day.label}</div>
+					<div class={cn('mt-1 text-xs', mine ? 'text-background/60' : 'text-muted-foreground')}>
 						{day.dateLabel}
 					</div>
 				</div>
-				{@render chips(day.iso, '', mine)}
+				<div class="mt-auto">{@render chips(day.iso, '')}</div>
 			</div>
 		{:else}
-			<div class="flex min-w-36 flex-1 flex-col bg-background">
-				<div class="p-5 pb-3">
-					<div class="text-5xl leading-none font-black">{day.label}</div>
-					<div class="mt-2 text-xs text-muted-foreground">{day.dateLabel}</div>
+			<div class="flex min-h-40 min-w-36 flex-1 flex-col gap-4 bg-background p-4">
+				<div>
+					<div class="text-2xl leading-none font-bold">{day.label}</div>
+					<div class="mt-1 text-xs text-muted-foreground">{day.dateLabel}</div>
 				</div>
 				{#each slots as slot (slot)}
 					{@const mine = isMine(day.iso, slot)}
-					<div
-						class={cn(
-							'relative flex min-h-28 flex-1 flex-col gap-2 border-t border-foreground p-3',
-							mine ? 'bg-foreground text-background' : 'bg-background'
-						)}
-					>
-						{@render overlay(day.iso, slot, `${day.label} ${slot}`, mine)}
-						<div class="pointer-events-none relative font-mono text-xs font-bold">{slot}</div>
-						{@render chips(day.iso, slot, mine)}
+					<div class="space-y-2">
+						<form method="POST" action="?/toggle" use:enhance={() => submit(day.iso, slot)}>
+							<input type="hidden" name="date" value={day.iso} />
+							<input type="hidden" name="slot" value={slot} />
+							<button
+								type="submit"
+								aria-pressed={mine}
+								class="flex min-h-8 cursor-pointer items-center gap-2 text-xs hover:underline"
+							>
+								<span
+									aria-hidden="true"
+									class={cn('size-3 border border-foreground', mine && 'bg-foreground')}
+								></span>
+								<span class={cn(mine && 'font-bold')}>{slot}</span>
+							</button>
+						</form>
+						{@render chips(day.iso, slot)}
 					</div>
 				{/each}
 			</div>

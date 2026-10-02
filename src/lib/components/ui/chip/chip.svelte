@@ -6,10 +6,10 @@
 		ref?: HTMLElement | null;
 		/** Member color, any CSS color (hex from the members table). */
 		color: string;
-		/** The current user's own chip: full strength, bigger shadow on hover. */
+		/** The current user's own chip: full strength. Other chips are slightly dimmed. */
 		own?: boolean;
-		/** The chip sits on an inverted (foreground-colored) background. */
-		onInverted?: boolean;
+		/** Shows a small marker: this entry has a note. */
+		note?: boolean;
 	};
 
 	let {
@@ -17,7 +17,7 @@
 		ref = $bindable(null),
 		color,
 		own = false,
-		onInverted = false,
+		note = false,
 		children,
 		...rest
 	}: Props = $props();
@@ -27,15 +27,7 @@
 <span
 	bind:this={ref}
 	class={cn(
-		'inline-flex min-h-20 min-w-20 -rotate-[1.5deg] items-center justify-center bg-(--chip) p-2 text-center font-mono text-xs leading-tight font-bold motion-safe:animate-chip-in motion-safe:transition-shadow motion-safe:duration-150',
-		// Soft offset shadow, translucent like the original; own chips grow it on hover.
-		onInverted
-			? own
-				? 'shadow-[2px_2px_0_0_rgba(255,255,255,0.65)] hover:shadow-[4px_4px_0_0_rgba(255,255,255,0.65)]'
-				: 'shadow-[2px_2px_0_0_rgba(255,255,255,0.3)]'
-			: own
-				? 'shadow-[2px_2px_0_0_rgba(0,0,0,0.3)] hover:shadow-[4px_4px_0_0_rgba(0,0,0,0.3)]'
-				: 'shadow-[2px_2px_0_0_rgba(0,0,0,0.12)]',
+		'relative inline-flex min-h-8 items-center bg-(--chip) px-3 text-xs font-bold motion-safe:animate-chip-in',
 		!own && 'opacity-60',
 		className
 	)}
@@ -43,4 +35,7 @@
 	{...rest}
 >
 	{@render children?.()}
+	{#if note}
+		<span aria-label="Has a note" class="absolute top-1 right-1 size-1.5 bg-current"></span>
+	{/if}
 </span>
