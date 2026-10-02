@@ -6,6 +6,7 @@ description: Build or restyle a UI component for dabei in the brutalist black/wh
 # Building a brutalist component
 
 ## Before you start
+
 - Read the "Design" section in `docs/project.md`.
 - Check `src/lib/components/ui/` – does a similar component already exist? Extend it instead of duplicating.
 
@@ -16,6 +17,7 @@ description: Build or restyle a UI component for dabei in the brutalist black/wh
    - Interactive with focus/keyboard/ARIA needs (Dialog, Popover, Tabs, Switch, Select): wrap the matching **bits-ui** primitive. Never copy a styled shadcn component.
 
 2. **Create the files**
+
    ```
    src/lib/components/ui/<name>/
    ├── <name>.svelte
@@ -47,5 +49,6 @@ description: Build or restyle a UI component for dabei in the brutalist black/wh
    - `feat(ui): add <name> component`
 
 ## Don'ts
+
 - No default shadcn styles, no `rounded-*`, no `shadow-sm/md/lg`, no pastel colors.
 - No hardcoded colors or text that belong in settings.

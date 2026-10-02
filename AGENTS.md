@@ -1,3 +1,11 @@
+## Project Configuration
+
+- **Language**: TypeScript
+- **Package Manager**: bun
+- **Add-ons**: ai-tools, paraglide, drizzle, sveltekit-adapter, tailwindcss, vitest, prettier, eslint
+
+---
+
 # AGENTS.md – dabei
 
 Read `docs/project.md` before starting any task. It defines scope, stack, data model and design.
@@ -17,10 +25,10 @@ Reusable workflows live in `.agents/skills/` – use them when a task matches.
 
 ## Terminal permissions
 
-| Allowed without asking | Must be announced |
-|---|---|
+| Allowed without asking                | Must be announced                       |
+| ------------------------------------- | --------------------------------------- |
 | `ls`, `grep`, `find`, `cat` – reading | `bun`, `bunx`, `git commit`, `git push` |
-| Exploring the file structure | Creating or changing files |
+| Exploring the file structure          | Creating or changing files              |
 
 ---
 
