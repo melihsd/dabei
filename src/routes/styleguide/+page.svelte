@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { Popover, PopoverContent, PopoverTrigger } from '#lib/components/ui/popover/index.js';
+	import { Textarea } from '#lib/components/ui/textarea/index.js';
 	import { Tabs, TabsContent, TabsList, TabsTrigger } from '#lib/components/ui/tabs/index.js';
 	import { Chip } from '#lib/components/ui/chip/index.js';
 	import { Card, CardContent, CardHeader } from '#lib/components/ui/card/index.js';
@@ -19,6 +21,7 @@
 	];
 
 	let week = $state('this');
+	let note = $state('');
 	let dark = $state(false);
 
 	function toggleDark() {
@@ -104,6 +107,21 @@
 			<Chip color="#00b84a">Cem</Chip>
 			<Chip color="#ffd600">Dana</Chip>
 			<Chip color="#a100ff">Eli</Chip>
+		</div>
+	</section>
+
+	<section class="space-y-4">
+		<h2 class="text-2xl font-bold">Textarea and Popover</h2>
+		<div class="flex flex-wrap items-start gap-6">
+			<Textarea bind:value={note} placeholder="Short note" maxlength={140} class="max-w-xs" />
+			<Popover>
+				<PopoverTrigger
+					class="min-h-11 cursor-pointer border-2 border-foreground px-4 font-mono text-sm font-bold uppercase hover:bg-foreground hover:text-background"
+				>
+					Open popover
+				</PopoverTrigger>
+				<PopoverContent>Popover content with a hard shadow</PopoverContent>
+			</Popover>
 		</div>
 	</section>
 
