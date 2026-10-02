@@ -1,5 +1,7 @@
 # dabei
 
+> Inspired by [office-zeit](https://github.com/nestoririondo/office-zeit) by Nestor Iriondo. Written from scratch.
+
 **Who's in, and when.**
 
 A small self-hosted planner for teams: everyone marks when they're in – full days or time slots – and can leave a short note on their entry, shown as a chat bubble. One container, one SQLite file, no login.
@@ -77,10 +79,6 @@ docker run -d --name dabei -p 3000:3000 \
 - `PORT` (default 3000) changes the published port in Compose. The image has a health check.
 - It works on plain http and behind a reverse proxy (form posts are accepted when the `Origin` host matches the `Host` or `X-Forwarded-Host` header). Put a TLS proxy in front if it's reachable from the internet.
 - The app has no login for regular use. If the URL is public, protect it with Basic Auth at the proxy.
-
-## Credit
-
-Inspired by [office-zeit](https://github.com/nestoririondo/office-zeit) by Nestor Iriondo. Written from scratch.
 
 ## License
 

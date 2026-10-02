@@ -1,10 +1,10 @@
 # dabei
 
+> Inspired by [office-zeit](https://github.com/nestoririondo/office-zeit) by Nestor Iriondo. Written from scratch, no code taken over.
+
 **Who's in, and when.**
 
 A small self-hosted planner for teams: everyone marks when they're in – full days or time slots – and can leave a short note on their entry, shown as a chat bubble. One container, one SQLite file, no login.
-
-Inspired by [office-zeit](https://github.com/nestoririondo/office-zeit) by Nestor Iriondo. Written from scratch, no code taken over.
 
 ---
 
