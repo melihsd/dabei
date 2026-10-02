@@ -1,0 +1,18 @@
+services:
+  dabei:
+    build: .
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      # The adapter assumes HTTPS unless the proxy says otherwise. Put the app behind a
+      # TLS-terminating reverse proxy that sets these headers, or form posts are rejected.
+      PROTOCOL_HEADER: x-forwarded-proto
+      HOST_HEADER: x-forwarded-host
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?set ADMIN_PASSWORD}
+      COOKIE_SECRET: ${COOKIE_SECRET:?set COOKIE_SECRET}
+    volumes:
+      - dabei-data:/app/data
+
+volumes:
+  dabei-data:
