@@ -128,7 +128,7 @@ export const presence = sqliteTable(
 - `--radius: 0` everywhere. No `rounded-*`
 - Borders: 1px solid, black (white in dark mode)
 - Shadows: only hard offset shadows, never blurred, and only where needed (popovers)
-- Week view: day cards joined into one bordered grid, no inner dividers inside a day. Flat compact chips (no tilt, no shadow), own day inverted
+- Week view: day cards joined into one bordered grid. In slot mode each slot is a clickable box (+ on hover, black when you are in). Flat compact chips (no tilt, no shadow), own day inverted
 - Color only as accent: each member's chip color is the main exception
 - No pastels – saturated colors only
 - Typography: monospace or grotesque, no serif (Geist Mono everywhere, like office-zeit)

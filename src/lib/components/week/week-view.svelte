@@ -91,6 +91,32 @@
 	</div>
 {/snippet}
 
+{#snippet overlay(date: string, slot: string, label: string, mine: boolean)}
+	<form method="POST" action="?/toggle" use:enhance={() => submit(date, slot)}>
+		<input type="hidden" name="date" value={date} />
+		<input type="hidden" name="slot" value={slot} />
+		<button
+			type="submit"
+			aria-pressed={mine}
+			aria-label={label}
+			class={cn(
+				'group absolute inset-0 cursor-pointer motion-safe:transition-colors motion-safe:duration-100',
+				mine ? 'hover:bg-background/10' : 'hover:bg-foreground/5'
+			)}
+		>
+			<span
+				aria-hidden="true"
+				class={cn(
+					'absolute top-2 right-3 text-xl leading-none font-bold opacity-0 group-hover:opacity-100 motion-safe:transition-opacity motion-safe:duration-100',
+					mine ? 'text-background/60' : 'text-foreground/40'
+				)}
+			>
+				{mine ? '−' : '+'}
+			</span>
+		</button>
+	</form>
+{/snippet}
+
 <div
 	class="flex flex-col gap-px overflow-x-auto border border-foreground bg-foreground sm:flex-row"
 >
@@ -103,19 +129,7 @@
 					mine ? 'bg-foreground text-background' : 'bg-background'
 				)}
 			>
-				<form method="POST" action="?/toggle" use:enhance={() => submit(day.iso, '')}>
-					<input type="hidden" name="date" value={day.iso} />
-					<input type="hidden" name="slot" value="" />
-					<button
-						type="submit"
-						aria-pressed={mine}
-						aria-label={`${day.label} ${day.dateLabel}`}
-						class={cn(
-							'absolute inset-0 cursor-pointer motion-safe:transition-colors motion-safe:duration-100',
-							mine ? 'hover:bg-background/10' : 'hover:bg-foreground/5'
-						)}
-					></button>
-				</form>
+				{@render overlay(day.iso, '', `${day.label} ${day.dateLabel}`, mine)}
 				<div class="pointer-events-none relative">
 					<div class="text-2xl leading-none font-bold">{day.label}</div>
 					<div class={cn('mt-1 text-xs', mine ? 'text-background/60' : 'text-muted-foreground')}>
@@ -132,23 +146,15 @@
 				</div>
 				{#each slots as slot (slot)}
 					{@const mine = isMine(day.iso, slot)}
-					<div class="space-y-2">
-						<form method="POST" action="?/toggle" use:enhance={() => submit(day.iso, slot)}>
-							<input type="hidden" name="date" value={day.iso} />
-							<input type="hidden" name="slot" value={slot} />
-							<button
-								type="submit"
-								aria-pressed={mine}
-								class="flex min-h-8 cursor-pointer items-center gap-2 text-xs hover:underline"
-							>
-								<span
-									aria-hidden="true"
-									class={cn('size-3 border border-foreground', mine && 'bg-foreground')}
-								></span>
-								<span class={cn(mine && 'font-bold')}>{slot}</span>
-							</button>
-						</form>
-						{@render chips(day.iso, slot)}
+					<div
+						class={cn(
+							'relative flex min-h-24 flex-col gap-3 border border-foreground p-3',
+							mine ? 'bg-foreground text-background' : 'bg-background'
+						)}
+					>
+						{@render overlay(day.iso, slot, `${day.label} ${slot}`, mine)}
+						<div class="pointer-events-none relative text-xs font-bold">{slot}</div>
+						<div class="mt-auto">{@render chips(day.iso, slot)}</div>
 					</div>
 				{/each}
 			</div>
