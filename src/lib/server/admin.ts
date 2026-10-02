@@ -1,19 +1,9 @@
-import { createHmac, timingSafeEqual } from 'node:crypto';
 import type { Cookies } from '@sveltejs/kit';
 import { ADMIN_PASSWORD, COOKIE_SECRET } from '$app/env/private';
+import { safeEqual, sign } from './signing.js';
 
 const ADMIN_COOKIE = 'dabei_admin';
 const SESSION_SECONDS = 60 * 60 * 12;
-
-function sign(payload: string) {
-	return createHmac('sha256', COOKIE_SECRET).update(payload).digest('hex');
-}
-
-function safeEqual(a: string, b: string) {
-	const ha = createHmac('sha256', 'cmp').update(a).digest();
-	const hb = createHmac('sha256', 'cmp').update(b).digest();
-	return timingSafeEqual(ha, hb);
-}
 
 export function adminConfigured() {
 	return Boolean(ADMIN_PASSWORD && COOKIE_SECRET);

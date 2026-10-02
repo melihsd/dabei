@@ -1,4 +1,5 @@
 import { and, asc, desc, eq, gte, lte } from 'drizzle-orm';
+import { MAX_NAME_LENGTH, MEMBER_COLORS } from '#lib/constants.js';
 import { db } from './index';
 import { members, presence, settings } from './schema';
 
@@ -108,4 +109,41 @@ export function deleteMember(id: number) {
 
 export function updateSettings(values: { mode: 'day' | 'slots'; slots: string; workdays: string }) {
 	db.update(settings).set(values).where(eq(settings.id, 1)).run();
+}
+
+export function setAuthRequired(authRequired: boolean) {
+	db.update(settings).set({ authRequired }).where(eq(settings.id, 1)).run();
+}
+
+/**
+ * Finds the member for an Outline user. First login either claims an existing name
+ * (same name, not yet linked) or creates a new member.
+ */
+export function memberForOutlineUser(user: { id: string; name: string }) {
+	const linked = db.select().from(members).where(eq(members.outlineId, user.id)).get();
+	if (linked) return linked;
+
+	const name = user.name.trim().slice(0, MAX_NAME_LENGTH) || 'Guest';
+	const sameName = getAllMembers().find((m) => m.name.toLowerCase() === name.toLowerCase());
+	if (sameName && !sameName.outlineId) {
+		return db
+			.update(members)
+			.set({ outlineId: user.id })
+			.where(eq(members.id, sameName.id))
+			.returning()
+			.get();
+	}
+
+	// Name taken by someone else: add a number so names stay unique.
+	let unique = name;
+	for (let n = 2; memberNameExists(unique); n++) {
+		unique = `${name.slice(0, MAX_NAME_LENGTH - String(n).length - 1)} ${n}`;
+	}
+	const member = createMember(unique, MEMBER_COLORS[getAllMembers().length % MEMBER_COLORS.length]);
+	return db
+		.update(members)
+		.set({ outlineId: user.id })
+		.where(eq(members.id, member.id))
+		.returning()
+		.get();
 }

@@ -15,6 +15,13 @@
       "when": 1790953763330,
       "tag": "0001_kind_nebula",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1790976656542,
+      "tag": "0002_black_korg",
+      "breakpoints": true
     }
   ]
 }

@@ -26,7 +26,21 @@
 </script>
 
 <main class="space-y-8 p-4 sm:p-8">
-	{#if !data.member}
+	{#if !data.member && data.authRequired}
+		<section class="mx-auto max-w-md space-y-6 pt-12">
+			<h1 class="text-4xl font-bold tracking-tight">Sign in</h1>
+			{#if !data.loginConfigured}
+				<p class="font-bold text-destructive">
+					Login is turned on but Outline is not configured. Ask an admin.
+				</p>
+			{:else}
+				{#if data.loginFailed}
+					<p class="font-bold text-destructive">Login failed. Please try again.</p>
+				{/if}
+				<Button href="/auth/login" data-sveltekit-reload>Sign in with Outline</Button>
+			{/if}
+		</section>
+	{:else if !data.member}
 		<section class="mx-auto max-w-2xl space-y-8">
 			{#if data.members.length > 0}
 				<div class="space-y-6">
@@ -103,14 +117,25 @@
 						</form>
 					</PopoverContent>
 				</Popover>
-				<form method="POST" action="?/switch" use:enhance>
-					<button
-						type="submit"
-						class="cursor-pointer text-muted-foreground underline hover:text-foreground"
-					>
-						Not you?
-					</button>
-				</form>
+				{#if data.authRequired}
+					<form method="POST" action="/auth/logout">
+						<button
+							type="submit"
+							class="cursor-pointer text-muted-foreground underline hover:text-foreground"
+						>
+							Sign out
+						</button>
+					</form>
+				{:else}
+					<form method="POST" action="?/switch" use:enhance>
+						<button
+							type="submit"
+							class="cursor-pointer text-muted-foreground underline hover:text-foreground"
+						>
+							Not you?
+						</button>
+					</form>
+				{/if}
 			</div>
 		</header>
 

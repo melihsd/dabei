@@ -1,7 +1,7 @@
 import { text } from '@sveltejs/kit';
 import type { Handle } from '@sveltejs/kit/hooks';
-import { getActiveMember } from '#lib/server/db/queries.js';
-import { readMemberId } from '#lib/server/identity.js';
+import { getActiveMember, getSettings } from '#lib/server/db/queries.js';
+import { readMemberId, readSessionMemberId } from '#lib/server/identity.js';
 
 const MUTATING = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 const FORM_TYPES = ['application/x-www-form-urlencoded', 'multipart/form-data', 'text/plain'];
@@ -34,7 +34,11 @@ export const handle: Handle = ({ event, resolve }) => {
 		});
 	}
 
-	const id = readMemberId(event.cookies);
+	// With login required, only the signed session counts; the plain name cookie is ignored.
+	event.locals.authRequired = Boolean(getSettings()?.authRequired);
+	const id = event.locals.authRequired
+		? readSessionMemberId(event.cookies)
+		: readMemberId(event.cookies);
 	event.locals.member = (id !== null && getActiveMember(id)) || null;
 	return resolve(event);
 };

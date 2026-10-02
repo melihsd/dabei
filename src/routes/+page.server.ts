@@ -12,6 +12,7 @@ import {
 } from '#lib/server/db/queries.js';
 import { isValidColor, parseMemberName } from '#lib/settings.js';
 import type { Settings } from '#lib/server/db/schema.js';
+import { outlineConfigured } from '#lib/server/outline.js';
 import { clearMemberCookie, setMemberCookie } from '#lib/server/identity.js';
 import {
 	defaultWeek,
@@ -26,7 +27,16 @@ import { ENTRY_EMOJIS, MAX_COMMENT_LENGTH, MAX_NAME_LENGTH } from '#lib/constant
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = ({ locals, url }) => {
-	if (!locals.member) return { member: null, members: getActiveMembers() };
+	if (!locals.member) {
+		return {
+			member: null,
+			// With login required, people sign in with Outline instead of picking a name.
+			members: locals.authRequired ? [] : getActiveMembers(),
+			authRequired: locals.authRequired,
+			loginConfigured: outlineConfigured(),
+			loginFailed: url.searchParams.get('login') === 'failed'
+		};
+	}
 
 	const settings = getSettings();
 	if (!settings) throw new Error('Settings row missing. Run `bun run db:seed`.');
@@ -39,6 +49,7 @@ export const load: PageServerLoad = ({ locals, url }) => {
 	return {
 		member: locals.member,
 		members: [],
+		authRequired: locals.authRequired,
 		week,
 		mode: settings.mode,
 		slots: parseSlots(settings.slots),
@@ -52,7 +63,8 @@ export const load: PageServerLoad = ({ locals, url }) => {
 };
 
 export const actions: Actions = {
-	pick: async ({ request, cookies }) => {
+	pick: async ({ request, cookies, locals }) => {
+		if (locals.authRequired) return fail(403, { error: 'Sign in with Outline.' });
 		const data = await request.formData();
 		const member = getActiveMember(Number(data.get('memberId')));
 		if (!member) return fail(400, { error: 'Pick a name from the list.' });
@@ -61,7 +73,8 @@ export const actions: Actions = {
 		redirect(303, '/');
 	},
 
-	register: async ({ request, cookies }) => {
+	register: async ({ request, cookies, locals }) => {
+		if (locals.authRequired) return fail(403, { error: 'Sign in with Outline.' });
 		const data = await request.formData();
 		const name = parseMemberName(data.get('name'));
 		const color = String(data.get('color') ?? '');

@@ -3,6 +3,7 @@
 	import { resolve } from '$app/paths';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import { Input } from '#lib/components/ui/input/index.js';
+	import { Switch } from '#lib/components/ui/switch/index.js';
 	import { Textarea } from '#lib/components/ui/textarea/index.js';
 	import { WEEKDAYS, parseSlots, parseWorkdays } from '#lib/dates.js';
 	import { MAX_NAME_LENGTH } from '#lib/constants.js';
@@ -109,6 +110,47 @@
 					{/if}
 				{/if}
 				<Button type="submit">Save planner</Button>
+			</form>
+		</section>
+
+		<section class="space-y-4">
+			<h2 class="text-2xl font-bold">Login</h2>
+			<form
+				method="POST"
+				action="?/saveAuth"
+				use:enhance={() =>
+					({ update }) =>
+						update({ reset: false })}
+				class="max-w-xl space-y-4"
+			>
+				<label class="flex items-center gap-3">
+					<Switch name="authRequired" checked={data.settings?.authRequired ?? false} />
+					<span class="font-bold">Require login via Outline</span>
+				</label>
+				<p class="text-sm text-muted-foreground">
+					When on, people sign in with Outline instead of picking a name. Their Outline name becomes
+					their dabei name (an existing name with the same spelling is linked on first login). This
+					page stays behind the admin password.
+				</p>
+				<p class="text-sm">
+					Outline connection:
+					<strong class={data.outline.configured ? '' : 'text-destructive'}>
+						{data.outline.configured ? 'configured' : 'not configured'}
+					</strong>
+					{#if data.outline.redirectUri}
+						<br />
+						<span class="text-muted-foreground">Redirect URI to register in Outline:</span>
+						<code class="break-all">{data.outline.redirectUri}</code>
+					{/if}
+				</p>
+				{#if form?.scope === 'auth'}
+					{#if 'error' in form}
+						<p class="font-bold text-destructive">{form.error}</p>
+					{:else}
+						<p class="font-mono text-sm font-bold">Saved.</p>
+					{/if}
+				{/if}
+				<Button type="submit">Save login</Button>
 			</form>
 		</section>
 

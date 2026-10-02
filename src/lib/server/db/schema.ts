@@ -5,7 +5,8 @@ export const members = sqliteTable('members', {
 	name: text('name').notNull(),
 	color: text('color').notNull(), // hex, e.g. "#FF3B00"
 	sortOrder: integer('sort_order').notNull().default(0),
-	active: integer('active', { mode: 'boolean' }).notNull().default(true)
+	active: integer('active', { mode: 'boolean' }).notNull().default(true),
+	outlineId: text('outline_id').unique() // set when the person signed in via Outline
 });
 
 export const settings = sqliteTable('settings', {
@@ -14,7 +15,8 @@ export const settings = sqliteTable('settings', {
 		.notNull()
 		.default('day'),
 	slots: text('slots').notNull().default('09:00-13:00,13:00-18:00'),
-	workdays: text('workdays').notNull().default('mon,tue,wed,thu,fri')
+	workdays: text('workdays').notNull().default('mon,tue,wed,thu,fri'),
+	authRequired: integer('auth_required', { mode: 'boolean' }).notNull().default(false) // require Outline login
 });
 
 export const presence = sqliteTable(

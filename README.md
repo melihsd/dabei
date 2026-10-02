@@ -34,6 +34,16 @@ Bun · SvelteKit (Svelte 5) · Tailwind CSS v4 · bits-ui · SQLite (`bun:sqlite
 
 Copy `.env.example` to `.env` and fill it in. `.env` is never committed.
 
+## Login with Outline (optional)
+
+By default there are no accounts: people pick a name. If you run [Outline](https://www.getoutline.com), you can require a login with it instead:
+
+1. In Outline, create an OAuth client (Settings → Applications) with the redirect URI `https://your-dabei-host/auth/callback`.
+2. Set `OUTLINE_URL`, `OAUTH_CLIENT_ID`, `OAUTH_CLIENT_SECRET` and `OAUTH_REDIRECT_URI` (see `.env.example`).
+3. Sign in to `/settings` and switch on **Require login via Outline**.
+
+People then sign in with Outline. Their Outline name becomes their dabei name (an existing name with the same spelling is linked on first login), and they choose their own color. `/settings` keeps its own `ADMIN_PASSWORD`.
+
 ## Development
 
 ```sh

@@ -12,8 +12,10 @@ import {
 	getSettings,
 	deleteMember,
 	memberNameExists,
+	setAuthRequired,
 	updateSettings
 } from '#lib/server/db/queries.js';
+import { outlineConfigured, outlineRedirectUri } from '#lib/server/outline.js';
 import { WEEKDAYS } from '#lib/dates.js';
 import { MAX_NAME_LENGTH, MEMBER_COLORS } from '#lib/constants.js';
 import { isValidSlot, isWeekday, parseMemberName } from '#lib/settings.js';
@@ -25,6 +27,7 @@ export const load: PageServerLoad = ({ cookies }) => {
 	return {
 		admin: true as const,
 		settings: getSettings(),
+		outline: { configured: outlineConfigured(), redirectUri: outlineRedirectUri ?? null },
 		members: getAllMembers()
 	};
 };
@@ -78,6 +81,22 @@ export const actions: Actions = {
 			workdays: WEEKDAYS.filter((w) => workdays.includes(w)).join(',')
 		});
 		return { scope: 'settings', saved: true };
+	},
+
+	saveAuth: async ({ request, cookies }) => {
+		if (!isAdmin(cookies)) return fail(401, { scope: 'auth', error: 'Not signed in.' });
+
+		const enable = (await request.formData()).get('authRequired') === 'on';
+		if (enable && !outlineConfigured()) {
+			return fail(400, {
+				scope: 'auth',
+				error:
+					'Set OUTLINE_URL, OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET and OAUTH_REDIRECT_URI on the server first.'
+			});
+		}
+
+		setAuthRequired(enable);
+		return { scope: 'auth', saved: true };
 	},
 
 	addMember: async ({ request, cookies }) => {

@@ -9,6 +9,11 @@ services:
     environment:
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:?set ADMIN_PASSWORD}
       COOKIE_SECRET: ${COOKIE_SECRET:?set COOKIE_SECRET}
+      # Optional: sign in with Outline
+      OUTLINE_URL: ${OUTLINE_URL:-}
+      OAUTH_CLIENT_ID: ${OAUTH_CLIENT_ID:-}
+      OAUTH_CLIENT_SECRET: ${OAUTH_CLIENT_SECRET:-}
+      OAUTH_REDIRECT_URI: ${OAUTH_REDIRECT_URI:-}
     volumes:
       - dabei-data:/app/data
 

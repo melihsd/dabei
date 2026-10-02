@@ -4,6 +4,7 @@ declare global {
 	namespace App {
 		interface Locals {
 			member: Member | null;
+			authRequired: boolean;
 		}
 	}
 }
