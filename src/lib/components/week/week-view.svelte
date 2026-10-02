@@ -148,8 +148,8 @@
 					{@const mine = isMine(day.iso, slot)}
 					<div
 						class={cn(
-							'relative flex min-h-24 flex-col gap-3 border border-foreground p-3',
-							mine ? 'bg-foreground text-background' : 'bg-background'
+							'relative flex min-h-24 flex-col gap-3 p-3',
+							mine ? 'bg-foreground text-background' : 'bg-muted'
 						)}
 					>
 						{@render overlay(day.iso, slot, `${day.label} ${slot}`, mine)}
