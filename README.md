@@ -45,15 +45,27 @@ Open `/styleguide` to see the design tokens and components. After changing `src/
 
 ## Deploy with Docker
 
+Build and run with Compose:
+
 ```sh
 export ADMIN_PASSWORD=change-me
 export COOKIE_SECRET=$(openssl rand -hex 32)
-docker compose up -d --build
+docker compose up -d --build     # http://localhost:3000
 ```
 
-- The SQLite file lives on the `dabei-data` volume (`/app/data`). Include it in your backups.
+Or build the image yourself and run it:
+
+```sh
+docker build -t dabei .
+docker run -d --name dabei -p 3000:3000 \
+  -e ADMIN_PASSWORD=change-me -e COOKIE_SECRET=$(openssl rand -hex 32) \
+  -v dabei-data:/app/data dabei
+```
+
+- The SQLite file lives in `/app/data`. Mount a volume there and include it in your backups.
 - Migrations run automatically on every start. Add names in `/settings` after signing in with `ADMIN_PASSWORD`, or let people add themselves.
-- **Run it behind a TLS-terminating reverse proxy** that sets `X-Forwarded-Proto` and `X-Forwarded-Host`. The Bun adapter assumes HTTPS, and form posts are rejected otherwise.
+- `PORT` (default 3000) changes the published port in Compose. The image has a health check.
+- It works on plain http and behind a reverse proxy (form posts are accepted when the `Origin` host matches the `Host` or `X-Forwarded-Host` header). Put a TLS proxy in front if it's reachable from the internet.
 - The app has no login for regular use. If the URL is public, protect it with Basic Auth at the proxy.
 
 ## Credit

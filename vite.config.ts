@@ -13,7 +13,11 @@ export default defineConfig({
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
 
-			adapter: adapter()
+			adapter: adapter(),
+
+			// Origin checking is done in hooks.server.ts, because the Bun adapter assumes HTTPS
+			// and would reject every form post on plain http.
+			csrf: { trustedOrigins: ['*'] }
 		})
 	]
 });
