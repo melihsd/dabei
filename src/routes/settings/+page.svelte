@@ -13,7 +13,7 @@
 	let { data, form } = $props();
 
 	const chipLabel =
-		'flex min-h-11 cursor-pointer items-center border- border-foreground px-4 font-mono text-sm font-bold uppercase has-checked:bg-foreground has-checked:text-background has-focus-visible:outline-2 has-focus-visible:outline-offset-2';
+		'flex min-h-11 cursor-pointer items-center border border-foreground px-4 font-mono text-sm font-bold uppercase has-checked:bg-foreground has-checked:text-background has-focus-visible:outline-2 has-focus-visible:outline-offset-2';
 </script>
 
 <main class="mx-auto max-w-3xl space-y-8 p-4 sm:p-8">
@@ -31,7 +31,7 @@
 
 	{#if !data.admin}
 		{#if !data.configured}
-			<p class="border- border-destructive p-4 font-bold text-destructive">
+			<p class="border border-destructive p-4 font-bold text-destructive">
 				ADMIN_PASSWORD and COOKIE_SECRET are not set on the server.
 			</p>
 		{:else}

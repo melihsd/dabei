@@ -26,7 +26,7 @@
 	<legend class="sr-only">Color</legend>
 	{#each SWATCHES as swatch (swatch)}
 		<label
-			class="border- size-8 cursor-pointer border-foreground has-checked:shadow-hard has-checked:outline-2 has-checked:outline-offset-2 has-checked:outline-foreground has-focus-visible:outline-2 has-focus-visible:outline-offset-2"
+			class="size-8 cursor-pointer border border-foreground has-checked:shadow-hard has-checked:outline-2 has-checked:outline-offset-2 has-checked:outline-foreground has-focus-visible:outline-2 has-focus-visible:outline-offset-2"
 			style="background: {swatch}"
 		>
 			<input type="radio" {name} value={swatch} bind:group={value} class="sr-only" />

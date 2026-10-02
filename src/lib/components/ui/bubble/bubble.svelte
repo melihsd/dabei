@@ -20,7 +20,7 @@
 <div
 	bind:this={ref}
 	class={cn(
-		'border- relative max-w-64 border-foreground bg-card px-3 py-2 text-sm break-words text-card-foreground motion-safe:animate-chip-in',
+		'relative max-w-64 border border-foreground bg-card px-3 py-2 text-sm break-words text-card-foreground motion-safe:animate-chip-in',
 		className
 	)}
 	{...rest}

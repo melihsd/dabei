@@ -7,6 +7,6 @@
 
 <TabsPrimitive.List
 	bind:ref
-	class={cn('border- inline-flex w-full border-foreground sm:w-fit', className)}
+	class={cn('mx-auto inline-flex w-fit border border-foreground', className)}
 	{...rest}
 />

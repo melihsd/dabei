@@ -19,7 +19,7 @@
 <div
 	bind:this={ref}
 	class={cn(
-		'border- border-foreground bg-card text-card-foreground',
+		'border border-foreground bg-card text-card-foreground',
 		shadow && 'shadow-hard',
 		className
 	)}
