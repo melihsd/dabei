@@ -15,7 +15,7 @@ To recreate this project with the same configuration:
 
 ```sh
 # recreate this project
-bun x sv@1.0.1 create --template minimal --types ts --add ai-tools="ide:other" paraglide="languageTags:en, de+demo:no" drizzle="database:sqlite+sqlite:better-sqlite3" sveltekit-adapter="adapter:auto" tailwindcss="plugins:none" vitest="usages:unit,component" prettier eslint --install bun .
+bun x sv@1.0.1 create --template minimal --types ts --add ai-tools="ide:other" paraglide="languageTags:en, de+demo:no" drizzle="database:sqlite+sqlite:bun-sqlite" sveltekit-adapter="adapter:node" tailwindcss="plugins:none" prettier eslint --install bun .
 ```
 
 ## Adding features

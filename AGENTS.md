@@ -2,7 +2,7 @@
 
 - **Language**: TypeScript
 - **Package Manager**: bun
-- **Add-ons**: ai-tools, paraglide, drizzle, sveltekit-adapter, tailwindcss, vitest, prettier, eslint
+- **Add-ons**: ai-tools, paraglide, drizzle, sveltekit-adapter, tailwindcss, prettier, eslint
 
 ---
 
