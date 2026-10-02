@@ -1,6 +1,7 @@
 services:
   dabei:
-    image: dabei:latest
+    # Use the prebuilt image from GitHub, or run `docker compose up --build` to build locally.
+    image: ghcr.io/melihsd/dabei:latest
     build: .
     restart: unless-stopped
     ports:

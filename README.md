@@ -45,12 +45,22 @@ Open `/styleguide` to see the design tokens and components. After changing `src/
 
 ## Deploy with Docker
 
-Build and run with Compose:
+Every push to `main` builds an image (amd64 and arm64) with GitHub Actions and publishes it to `ghcr.io/melihsd/dabei` (tags: `latest`, the commit SHA, and `vX.Y.Z` for version tags). Pull requests only check that the image builds. If the package is private, make it public under the repository's _Packages_ settings, or log in with `docker login ghcr.io`.
+
+Run the published image with Compose:
 
 ```sh
 export ADMIN_PASSWORD=change-me
 export COOKIE_SECRET=$(openssl rand -hex 32)
-docker compose up -d --build     # http://localhost:3000
+docker compose pull && docker compose up -d     # http://localhost:3000
+```
+
+Or build locally:
+
+```sh
+export ADMIN_PASSWORD=change-me
+export COOKIE_SECRET=$(openssl rand -hex 32)
+docker compose up -d --build
 ```
 
 Or build the image yourself and run it:
