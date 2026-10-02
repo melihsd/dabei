@@ -12,15 +12,16 @@ Inspired by [office-zeit](https://github.com/nestor-iriondo/office-zeit) by Nest
 
 | Part        | Choice                         | Note                                                   |
 |-------------|--------------------------------|--------------------------------------------------------|
-| Framework   | SvelteKit (Svelte 5, TS)       | `adapter-node`                                         |
+| Runtime     | Bun                            | Package manager, dev and production runtime            |
+| Framework   | SvelteKit (Svelte 5, TS)       | `adapter-node`, run with Bun                           |
 | Styling     | Tailwind CSS v4                | Design tokens as CSS variables                         |
 | Components  | shadcn-svelte setup + bits-ui  | Own components, own look – see "Design"                |
-| Database    | SQLite + Drizzle ORM           | `better-sqlite3`, one file, no external service        |
+| Database    | SQLite + Drizzle ORM           | `bun:sqlite`, one file, no external service            |
 | Identity    | Name picker + cookie           | No accounts, no passwords                              |
 | Admin       | `ADMIN_PASSWORD` env           | Protects the settings page only                        |
-| Deploy      | Docker Compose                 | Hetzner, SQLite file on a volume                       |
+| Deploy      | Docker Compose (`oven/bun` image) | Hetzner, SQLite file on a volume                   |
 
-Why Drizzle instead of Prisma: lighter, no query engine binary in the Docker image, scaffolded by `sv add`, schema is plain TypeScript.
+Why Drizzle instead of Prisma: lighter, no query engine binary or native addon in the Docker image, scaffolded by `sv add`, schema is plain TypeScript.
 
 ---
 

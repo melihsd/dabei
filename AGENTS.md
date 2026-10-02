@@ -19,7 +19,7 @@ Reusable workflows live in `.agents/skills/` – use them when a task matches.
 
 | Allowed without asking | Must be announced |
 |---|---|
-| `ls`, `grep`, `find`, `cat` – reading | `npm`, `npx`, `git commit`, `git push` |
+| `ls`, `grep`, `find`, `cat` – reading | `bun`, `bunx`, `git commit`, `git push` |
 | Exploring the file structure | Creating or changing files |
 
 ---
