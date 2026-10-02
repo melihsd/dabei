@@ -9,10 +9,7 @@
 
 <div
 	bind:this={ref}
-	class={cn(
-		'flex items-baseline justify-between gap-2 border-b-2 border-foreground p-3',
-		className
-	)}
+	class={cn('flex items-baseline justify-between gap-2 border-b border-foreground p-3', className)}
 	{...rest}
 >
 	{@render children?.()}

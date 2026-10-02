@@ -124,12 +124,13 @@ export const presence = sqliteTable(
 
 - Black, white, hard edges, clear typography
 - `--radius: 0` everywhere. No `rounded-*`
-- Borders: 2px solid, black (white in dark mode)
-- Shadows: only hard offset shadows (e.g. `4px 4px 0 0 #000`) as an accent, never blurred
+- Borders: 1px solid, black (white in dark mode)
+- Shadows: only hard offset shadows, never blurred. Chips use a translucent `2px 2px` offset (own chip: `4px 4px` on hover)
+- Week view: day cards joined into one bordered grid, huge weekday label, chips as 80px squares tilted by -1.5deg, own day inverted
 - Color only as accent: each member's chip color is the main exception
 - No pastels – saturated colors only
-- Typography: monospace or grotesque, no serif (Geist Sans + Geist Mono)
-- Chat bubble: rectangle with a hard 2px border and a square/triangular tail, no rounded corners
+- Typography: monospace or grotesque, no serif (Geist Mono everywhere, like office-zeit)
+- Chat bubble: rectangle with a hard 1px border and a square/triangular tail, no rounded corners
 - Motion: short and functional (≤150 ms), respects `prefers-reduced-motion`
 
 ### Components (own, in `src/lib/components/ui/`)

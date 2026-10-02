@@ -11,7 +11,7 @@
 	bind:this={ref}
 	bind:value
 	class={cn(
-		'min-h-20 w-full resize-none border-2 border-foreground bg-background p-2 text-sm placeholder:text-muted-foreground disabled:opacity-40',
+		'border- min-h-20 w-full resize-none border-foreground bg-background p-2 text-sm placeholder:text-muted-foreground disabled:opacity-40',
 		className
 	)}
 	{...rest}></textarea>

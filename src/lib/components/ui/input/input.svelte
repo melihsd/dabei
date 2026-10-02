@@ -11,7 +11,7 @@
 	bind:this={ref}
 	bind:value
 	class={cn(
-		'min-h-11 w-full border-2 border-foreground bg-background px-3 text-sm placeholder:text-muted-foreground disabled:opacity-40',
+		'border- min-h-11 w-full border-foreground bg-background px-3 text-sm placeholder:text-muted-foreground disabled:opacity-40',
 		className
 	)}
 	{...rest}

@@ -14,7 +14,7 @@
 	bind:ref
 	bind:checked
 	class={cn(
-		'inline-flex h-7 w-12 shrink-0 cursor-pointer items-center border-2 border-foreground p-0.5 disabled:opacity-40 data-[state=checked]:bg-foreground motion-safe:transition-colors motion-safe:duration-100',
+		'border- inline-flex h-7 w-12 shrink-0 cursor-pointer items-center border-foreground p-0.5 disabled:opacity-40 data-[state=checked]:bg-foreground motion-safe:transition-colors motion-safe:duration-100',
 		className
 	)}
 	{...rest}

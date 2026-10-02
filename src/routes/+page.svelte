@@ -2,9 +2,9 @@
 	import { enhance } from '$app/forms';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { Button } from '#lib/components/ui/button/index.js';
 	import { Chip } from '#lib/components/ui/chip/index.js';
 	import { Tabs, TabsList, TabsTrigger } from '#lib/components/ui/tabs/index.js';
+	import ThemeToggle from '#lib/components/theme-toggle.svelte';
 	import WeekView from '#lib/components/week/week-view.svelte';
 
 	let { data, form } = $props();
@@ -18,7 +18,7 @@
 	});
 </script>
 
-<main class="mx-auto max-w-5xl space-y-8 p-4 sm:p-8">
+<main class="space-y-8 p-4 sm:p-8">
 	{#if !data.member}
 		<section class="space-y-6">
 			<h1 class="text-4xl font-bold tracking-tight">Who are you?</h1>
@@ -39,21 +39,38 @@
 			{/if}
 		</section>
 	{:else}
-		<header class="flex flex-wrap items-center justify-between gap-4">
-			<Tabs value={data.week} onValueChange={(week) => goto(`?week=${week}`, { reset: false })}>
-				<TabsList>
-					<TabsTrigger value="this">This week</TabsTrigger>
-					<TabsTrigger value="next">Next week</TabsTrigger>
-				</TabsList>
-			</Tabs>
-			<div class="flex items-center gap-3">
-				<Chip color={data.member.color} own>{data.member.name}</Chip>
-				<Button href={resolve('/settings')} variant="outline" size="sm">Settings</Button>
+		<header class="flex flex-wrap items-center justify-between gap-4 pb-2">
+			<h1 class="text-2xl font-bold">dabei</h1>
+			<div class="flex items-center gap-4 text-sm">
+				<ThemeToggle />
+				<a href={resolve('/settings')} class="text-muted-foreground hover:text-foreground">
+					Settings
+				</a>
+				<span class="flex items-center gap-2">
+					<span class="size-4" style="background: {data.member.color}"></span>
+					<span class="text-muted-foreground">{data.member.name}</span>
+				</span>
 				<form method="POST" action="?/switch" use:enhance>
-					<Button type="submit" variant="outline" size="sm">Not you?</Button>
+					<button
+						type="submit"
+						class="cursor-pointer text-muted-foreground underline hover:text-foreground"
+					>
+						Not you?
+					</button>
 				</form>
 			</div>
 		</header>
+
+		<Tabs
+			value={data.week}
+			onValueChange={(week) => goto(`?week=${week}`, { reset: false })}
+			class="items-center"
+		>
+			<TabsList>
+				<TabsTrigger value="this">This week</TabsTrigger>
+				<TabsTrigger value="next">Next week</TabsTrigger>
+			</TabsList>
+		</Tabs>
 
 		<WeekView
 			me={data.member}

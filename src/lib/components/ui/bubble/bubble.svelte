@@ -20,7 +20,7 @@
 <div
 	bind:this={ref}
 	class={cn(
-		'relative max-w-64 border-2 border-foreground bg-card px-3 py-2 text-sm break-words text-card-foreground motion-safe:animate-chip-in',
+		'border- relative max-w-64 border-foreground bg-card px-3 py-2 text-sm break-words text-card-foreground motion-safe:animate-chip-in',
 		className
 	)}
 	{...rest}
@@ -30,7 +30,7 @@
 		aria-hidden="true"
 		class={cn(
 			'absolute left-3 size-3 rotate-45 border-foreground bg-card',
-			tail === 'down' ? '-bottom-[7px] border-r-2 border-b-2' : '-top-[7px] border-t-2 border-l-2'
+			tail === 'down' ? '-bottom-[7px] border-r border-b' : '-top-[7px] border-t border-l'
 		)}
 	></span>
 </div>

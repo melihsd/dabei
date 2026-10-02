@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { scale } from 'svelte/transition';
-	import { Card, CardContent, CardHeader } from '#lib/components/ui/card/index.js';
 	import { Bubble } from '#lib/components/ui/bubble/index.js';
 	import { Chip } from '#lib/components/ui/chip/index.js';
 	import CommentEditor from './comment-editor.svelte';
@@ -47,34 +46,43 @@
 	}
 </script>
 
-{#snippet toggle(date: string, slot: string, label: string, aside: string, class_: string)}
-	{@const mine = isMine(date, slot)}
-	<form method="POST" action="?/toggle" use:enhance={() => submit(date, slot)}>
+{#snippet overlay(date: string, slot: string, label: string, mine: boolean)}
+	<form
+		method="POST"
+		action="?/toggle"
+		use:enhance={() => submit(date, slot)}
+		class="absolute inset-0"
+	>
 		<input type="hidden" name="date" value={date} />
 		<input type="hidden" name="slot" value={slot} />
 		<button
 			type="submit"
 			aria-pressed={mine}
+			aria-label={label}
 			class={cn(
-				'flex min-h-11 w-full cursor-pointer items-baseline justify-between gap-2 p-3 text-left motion-safe:transition-colors motion-safe:duration-100',
-				mine
-					? 'bg-foreground text-background hover:bg-background hover:text-foreground'
-					: 'hover:bg-foreground hover:text-background',
-				class_
+				'group absolute inset-0 cursor-pointer motion-safe:transition-colors motion-safe:duration-150',
+				mine ? 'hover:bg-background/10' : 'hover:bg-foreground/5'
 			)}
 		>
-			<span class="font-bold uppercase">{label}</span>
-			<span class="font-mono text-sm">{aside}</span>
+			<span
+				aria-hidden="true"
+				class={cn(
+					'absolute top-3 right-4 text-2xl leading-none font-black opacity-0 group-hover:opacity-100 motion-safe:transition-opacity motion-safe:duration-150',
+					mine ? 'text-background/60' : 'text-foreground/30'
+				)}
+			>
+				{mine ? '−' : '+'}
+			</span>
 		</button>
 	</form>
 {/snippet}
 
-{#snippet chips(date: string, slot: string)}
-	<div class="flex min-h-16 flex-wrap content-start gap-2 p-3">
+{#snippet chips(date: string, slot: string, mine: boolean)}
+	<div class="pointer-events-none relative mt-auto flex flex-wrap gap-2 pt-4">
 		{#each entries(date, slot) as entry (entry.memberId)}
 			<span
 				out:scale={{ duration: 120, start: 0.8 }}
-				class="flex max-w-full flex-col items-start gap-2"
+				class="pointer-events-auto flex max-w-full flex-col items-start gap-2"
 			>
 				{#if entry.comment}
 					<Bubble class="max-w-full">{entry.comment}</Bubble>
@@ -86,37 +94,57 @@
 						name={entry.name}
 						color={entry.color}
 						comment={entry.comment}
+						onInverted={mine}
 					/>
 				{:else}
-					<Chip color={entry.color}>{entry.name}</Chip>
+					<Chip color={entry.color} onInverted={mine}>{entry.name}</Chip>
 				{/if}
 			</span>
-		{:else}
-			<span class="font-mono text-sm text-muted-foreground">–</span>
 		{/each}
 	</div>
 {/snippet}
 
-<div class="grid gap-4 md:grid-cols-[repeat(auto-fit,minmax(11rem,1fr))]">
+<div
+	class="flex flex-col gap-px overflow-x-auto border border-foreground bg-foreground sm:flex-row"
+>
 	{#each days as day (day.iso)}
-		<Card>
-			{#if mode === 'day'}
-				{@render toggle(day.iso, '', day.label, day.dateLabel, 'border-b-2 border-foreground')}
-				{@render chips(day.iso, '')}
-			{:else}
-				<CardHeader>
-					<span class="font-bold uppercase">{day.label}</span>
-					<span class="font-mono text-sm">{day.dateLabel}</span>
-				</CardHeader>
-				<CardContent class="p-0">
-					{#each slots as slot (slot)}
-						<div class="not-first:border-t-2 not-first:border-foreground">
-							{@render toggle(day.iso, slot, slot, '', '')}
-							{@render chips(day.iso, slot)}
-						</div>
-					{/each}
-				</CardContent>
-			{/if}
-		</Card>
+		{#if mode === 'day'}
+			{@const mine = isMine(day.iso, '')}
+			<div
+				class={cn(
+					'relative flex min-h-64 min-w-36 flex-1 flex-col gap-2 p-5',
+					mine ? 'bg-foreground text-background' : 'bg-background'
+				)}
+			>
+				{@render overlay(day.iso, '', `${day.label} ${day.dateLabel}`, mine)}
+				<div class="pointer-events-none relative">
+					<div class="text-5xl leading-none font-black">{day.label}</div>
+					<div class={cn('mt-2 text-xs', mine ? 'text-background/60' : 'text-muted-foreground')}>
+						{day.dateLabel}
+					</div>
+				</div>
+				{@render chips(day.iso, '', mine)}
+			</div>
+		{:else}
+			<div class="flex min-w-36 flex-1 flex-col bg-background">
+				<div class="p-5 pb-3">
+					<div class="text-5xl leading-none font-black">{day.label}</div>
+					<div class="mt-2 text-xs text-muted-foreground">{day.dateLabel}</div>
+				</div>
+				{#each slots as slot (slot)}
+					{@const mine = isMine(day.iso, slot)}
+					<div
+						class={cn(
+							'relative flex min-h-28 flex-1 flex-col gap-2 border-t border-foreground p-3',
+							mine ? 'bg-foreground text-background' : 'bg-background'
+						)}
+					>
+						{@render overlay(day.iso, slot, `${day.label} ${slot}`, mine)}
+						<div class="pointer-events-none relative font-mono text-xs font-bold">{slot}</div>
+						{@render chips(day.iso, slot, mine)}
+					</div>
+				{/each}
+			</div>
+		{/if}
 	{/each}
 </div>
