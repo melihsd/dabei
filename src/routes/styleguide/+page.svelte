@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Chip } from '#lib/components/ui/chip/index.js';
 	import { Card, CardContent, CardHeader } from '#lib/components/ui/card/index.js';
 	import { Button } from '#lib/components/ui/button/index.js';
 	const colors = [
@@ -76,6 +77,17 @@
 			<Button size="sm">Small</Button>
 			<Button size="icon" aria-label="Add">+</Button>
 			<Button href="/styleguide" variant="outline">As link</Button>
+		</div>
+	</section>
+
+	<section class="space-y-4">
+		<h2 class="text-2xl font-bold">Chip</h2>
+		<div class="flex flex-wrap gap-4">
+			<Chip color="#ff3b00" own>Anna (own)</Chip>
+			<Chip color="#0057ff">Ben</Chip>
+			<Chip color="#00b84a">Cem</Chip>
+			<Chip color="#ffd600">Dana</Chip>
+			<Chip color="#a100ff">Eli</Chip>
 		</div>
 	</section>
 
