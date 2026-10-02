@@ -128,7 +128,7 @@ export const presence = sqliteTable(
 - Shadows: only hard offset shadows (e.g. `4px 4px 0 0 #000`) as an accent, never blurred
 - Color only as accent: each member's chip color is the main exception
 - No pastels – saturated colors only
-- Typography: monospace or grotesque, no serif (e.g. JetBrains Mono + Space Grotesk)
+- Typography: monospace or grotesque, no serif (Geist Sans + Geist Mono)
 - Chat bubble: rectangle with a hard 2px border and a square/triangular tail, no rounded corners
 - Motion: short and functional (≤150 ms), respects `prefers-reduced-motion`
 
