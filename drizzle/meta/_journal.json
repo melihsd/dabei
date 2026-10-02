@@ -8,6 +8,13 @@
       "when": 1790942615245,
       "tag": "0000_talented_nehzno",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1790953763330,
+      "tag": "0001_kind_nebula",
+      "breakpoints": true
     }
   ]
 }

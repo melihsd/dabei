@@ -27,6 +27,7 @@ export const presence = sqliteTable(
 		date: text('date').notNull(), // ISO "2026-10-05"
 		slot: text('slot').notNull().default(''), // '' in day mode, "09:00-13:00" in slot mode
 		comment: text('comment'), // optional, max 140 chars
+		emojis: text('emojis').notNull().default(''), // comma-separated, e.g. "🐶,🍺"; excludes a comment
 		createdAt: integer('created_at', { mode: 'timestamp' })
 			.notNull()
 			.$defaultFn(() => new Date()),

@@ -48,6 +48,7 @@ Why Drizzle instead of Prisma: lighter, no query engine binary or native addon i
 - Each presence entry can have one optional note, max 140 chars
 - Shown as a chat bubble popup when hovering (or tapping) the person's chip; chips with a note carry a small marker
 - Click your own chip to edit it
+- Above the note field: emojis (🐶 🍺 ⏰ 🎂). Picking any emoji replaces the note (an entry has emojis or a note, never both); emojis show on the chip
 - Only the owner can add/edit/delete their note
 - Removing presence removes the note
 

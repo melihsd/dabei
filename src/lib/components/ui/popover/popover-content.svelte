@@ -6,6 +6,7 @@
 		class: className,
 		ref = $bindable(null),
 		sideOffset = 8,
+		align = 'start',
 		...rest
 	}: PopoverPrimitive.ContentProps = $props();
 </script>
@@ -14,6 +15,7 @@
 	<PopoverPrimitive.Content
 		bind:ref
 		{sideOffset}
+		{align}
 		class={cn(
 			'z-50 w-72 max-w-[calc(100vw-2rem)] border border-foreground bg-popover p-3 text-popover-foreground shadow-hard',
 			className

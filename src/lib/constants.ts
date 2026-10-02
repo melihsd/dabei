@@ -17,3 +17,6 @@ export const MEMBER_COLORS = [
 ] as const;
 
 export const MAX_NAME_LENGTH = 20;
+
+/** Emojis a person can attach to their entry instead of a note. */
+export const ENTRY_EMOJIS = ['🐶', '🍺', '⏰', '🎂'] as const;

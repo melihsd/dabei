@@ -6,7 +6,7 @@ import {
 	memberNameExists,
 	getPresenceBetween,
 	getSettings,
-	setComment,
+	setNote,
 	togglePresence,
 	updateMemberColor
 } from '#lib/server/db/queries.js';
@@ -22,7 +22,7 @@ import {
 	weekMonday,
 	type WeekKey
 } from '#lib/dates.js';
-import { MAX_COMMENT_LENGTH, MAX_NAME_LENGTH } from '#lib/constants.js';
+import { ENTRY_EMOJIS, MAX_COMMENT_LENGTH, MAX_NAME_LENGTH } from '#lib/constants.js';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = ({ locals, url }) => {
@@ -120,7 +120,15 @@ export const actions: Actions = {
 			return fail(400, { error: `Note is limited to ${MAX_COMMENT_LENGTH} characters.` });
 		}
 
-		const saved = setComment(locals.member.id, target.date, target.slot, comment || null);
+		// Emojis and a note exclude each other: any emoji wins and drops the note.
+		const emojis = data.has('remove')
+			? []
+			: ENTRY_EMOJIS.filter((e) => data.getAll('emojis').includes(e));
+
+		const saved = setNote(locals.member.id, target.date, target.slot, {
+			comment: comment || null,
+			emojis
+		});
 		if (!saved) return fail(400, { error: 'Mark yourself as present first.' });
 		return { ok: true };
 	}

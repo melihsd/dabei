@@ -31,6 +31,7 @@ export function getPresenceBetween(from: string, to: string) {
 			date: presence.date,
 			slot: presence.slot,
 			comment: presence.comment,
+			emojis: presence.emojis,
 			name: members.name,
 			color: members.color
 		})
@@ -55,11 +56,20 @@ export function togglePresence(memberId: number, date: string, slot: string) {
 	}
 }
 
-/** Sets or clears (null) the note on the member's own presence entry. Returns false if there is no entry. */
-export function setComment(memberId: number, date: string, slot: string, comment: string | null) {
+/** Sets the note or the emojis (never both) on the member's own entry. Returns false if there is no entry. */
+export function setNote(
+	memberId: number,
+	date: string,
+	slot: string,
+	note: { comment: string | null; emojis: string[] }
+) {
 	const updated = db
 		.update(presence)
-		.set({ comment, updatedAt: new Date() })
+		.set({
+			comment: note.emojis.length ? null : note.comment,
+			emojis: note.emojis.join(','),
+			updatedAt: new Date()
+		})
 		.where(and(eq(presence.memberId, memberId), eq(presence.date, date), eq(presence.slot, slot)))
 		.returning({ id: presence.id })
 		.all();

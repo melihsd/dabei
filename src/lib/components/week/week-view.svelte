@@ -7,7 +7,13 @@
 	import { cn } from '#lib/utils.js';
 	import type { WeekDay } from '#lib/dates.js';
 
-	type Entry = { memberId: number; name: string; color: string; comment: string | null };
+	type Entry = {
+		memberId: number;
+		name: string;
+		color: string;
+		comment: string | null;
+		emojis: string;
+	};
 
 	type Props = {
 		me: { id: number; name: string; color: string };
@@ -31,9 +37,14 @@
 		if (want === undefined) return rows;
 		const others = rows.filter((r) => r.memberId !== me.id);
 		return want
-			? [...others, { memberId: me.id, name: me.name, color: me.color, comment: null }]
+			? [...others, { memberId: me.id, name: me.name, color: me.color, comment: null, emojis: '' }]
 			: others;
 	}
+
+	const emojiList = (emojis: string) => (emojis ? emojis.split(',') : []);
+
+	/** Name followed by the entry's emojis. */
+	const label = (entry: Entry) => [entry.name, ...emojiList(entry.emojis)].join(' ');
 
 	function isMine(date: string, slot: string) {
 		return entries(date, slot).some((e) => e.memberId === me.id);
@@ -71,6 +82,7 @@
 						name={entry.name}
 						color={entry.color}
 						comment={entry.comment}
+						emojis={emojiList(entry.emojis)}
 					/>
 				{:else if entry.comment}
 					<!-- Hover shows the note; a tap toggles it on touch screens. -->
@@ -81,10 +93,10 @@
 						onclick={() => (shownNote = shownNote === noteKey ? null : noteKey)}
 						onblur={() => (shownNote = null)}
 					>
-						<Chip color={entry.color} note>{entry.name}</Chip>
+						<Chip color={entry.color} note>{label(entry)}</Chip>
 					</button>
 				{:else}
-					<Chip color={entry.color}>{entry.name}</Chip>
+					<Chip color={entry.color}>{label(entry)}</Chip>
 				{/if}
 			</span>
 		{/each}
