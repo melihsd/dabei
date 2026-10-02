@@ -72,8 +72,12 @@ export const actions: Actions = {
 		if (workdays.length === 0) {
 			return fail(400, { scope: 'settings', error: 'Pick at least one workday.' });
 		}
-		if (slots.some((s) => !isValidSlot(s))) {
-			return fail(400, { scope: 'settings', error: 'Slots look like 09:00-13:00, one per line.' });
+		const badSlot = slots.find((s) => !isValidSlot(s));
+		if (badSlot) {
+			return fail(400, {
+				scope: 'settings',
+				error: `"${badSlot}" is not a valid slot. Use HH:MM-HH:MM, e.g. 09:00-13:00.`
+			});
 		}
 		if (mode === 'slots' && slots.length === 0) {
 			return fail(400, { scope: 'settings', error: 'Slot mode needs at least one slot.' });

@@ -4,11 +4,11 @@ export const MAX_NAME_LENGTH = 20;
 
 const SLOT_PATTERN = /^([01]\d|2[0-3]):[0-5]\d-([01]\d|2[0-3]):[0-5]\d$/;
 
-/** A slot is "HH:MM-HH:MM" with the start before the end. */
+/** A slot is "HH:MM-HH:MM". The end may be earlier than the start for slots that run past midnight. */
 export function isValidSlot(slot: string) {
 	if (!SLOT_PATTERN.test(slot)) return false;
 	const [start, end] = slot.split('-');
-	return start < end;
+	return start !== end;
 }
 
 export function isValidColor(color: string) {
