@@ -26,7 +26,7 @@ description: Build or restyle a UI component for dabei in the brutalist black/wh
 
 3. **Write the component**
    - Svelte 5 runes: `let { class: className, children, ...rest } = $props();`
-   - Merge classes with `cn()` from `$lib/utils` so callers can extend.
+   - Merge classes with `cn()` from `#lib/utils.js` (SvelteKit 3 has no `$lib` alias; use `#lib/...` with the full file path, e.g. `#lib/components/ui/button/index.js`) so callers can extend.
    - Variants via a small `variants` object or `tailwind-variants` – keep it to what the app actually uses.
    - Forward `...rest` to the root element.
 

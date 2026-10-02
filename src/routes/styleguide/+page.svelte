@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Button } from '#lib/components/ui/button/index.js';
 	const colors = [
 		'background',
 		'foreground',
@@ -59,6 +60,21 @@
 			<div class="border-2 border-foreground p-4 shadow-hard">shadow-hard</div>
 			<div class="border-2 border-foreground bg-muted p-4">bg-muted</div>
 			<div class="border-2 border-destructive p-4 text-destructive">destructive</div>
+		</div>
+	</section>
+
+	<section class="space-y-4">
+		<h2 class="text-2xl font-bold">Button</h2>
+		<div class="flex flex-wrap gap-4">
+			<Button>Default</Button>
+			<Button variant="outline">Outline</Button>
+			<Button variant="destructive">Destructive</Button>
+			<Button disabled>Disabled</Button>
+		</div>
+		<div class="flex flex-wrap items-center gap-4">
+			<Button size="sm">Small</Button>
+			<Button size="icon" aria-label="Add">+</Button>
+			<Button href="/styleguide" variant="outline">As link</Button>
 		</div>
 	</section>
 
