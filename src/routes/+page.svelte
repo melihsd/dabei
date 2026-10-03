@@ -16,11 +16,11 @@
 
 	let colorOpen = $state(false);
 
-	// Live updates: refresh every 30 s while the tab is visible.
+	// Live updates: refresh every 10 s while the tab is visible.
 	$effect(() => {
 		const timer = setInterval(() => {
 			if (document.visibilityState === 'visible') invalidateAll();
-		}, 30_000);
+		}, 10_000);
 		return () => clearInterval(timer);
 	});
 </script>

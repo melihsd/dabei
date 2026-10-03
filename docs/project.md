@@ -77,7 +77,7 @@ Why Drizzle instead of Prisma: lighter, no query engine binary or native addon i
 
 ### Live updates
 
-- Poll every 30 s via `invalidateAll()` while the tab is visible
+- Poll every 10 s via `invalidateAll()` while the tab is visible
 
 ---
 
