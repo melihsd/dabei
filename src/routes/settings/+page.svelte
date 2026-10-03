@@ -3,7 +3,6 @@
 	import { resolve } from '$app/paths';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import { Input } from '#lib/components/ui/input/index.js';
-	import { Switch } from '#lib/components/ui/switch/index.js';
 	import { Textarea } from '#lib/components/ui/textarea/index.js';
 	import { WEEKDAYS, parseSlots, parseWorkdays } from '#lib/dates.js';
 	import { MAX_NAME_LENGTH } from '#lib/constants.js';
@@ -115,50 +114,38 @@
 
 		<section class="space-y-4">
 			<h2 class="text-2xl font-bold">Login</h2>
-			<form
-				method="POST"
-				action="?/saveAuth"
-				use:enhance={() =>
-					({ update }) =>
-						update({ reset: false })}
-				class="max-w-xl space-y-4"
-			>
-				<label class="flex items-center gap-3">
-					<Switch name="authRequired" checked={data.settings?.authRequired ?? false} />
-					<span class="font-bold">Require login via Outline</span>
-				</label>
-				<p class="text-sm text-muted-foreground">
-					When on, people sign in with Outline instead of picking a name. Their Outline name becomes
-					their dabei name (an existing name with the same spelling is linked on first login). This
-					page stays behind the admin password.
-				</p>
+			<div class="max-w-xl space-y-4">
 				<p class="text-sm">
-					Outline connection:
-					<strong class={data.outline.configured ? '' : 'text-destructive'}>
-						{data.outline.configured ? 'configured' : 'not configured'}
+					Login via Outline:
+					<strong class={data.outline.configured ? '' : 'text-muted-foreground'}>
+						{data.outline.configured ? 'on' : 'off'}
 					</strong>
-					{#if data.outline.redirectUri}
-						<br />
-						<span class="text-muted-foreground">Redirect URI to register in Outline:</span>
-						<code class="break-all">{data.outline.redirectUri}</code>
-					{/if}
 				</p>
-				{#if form?.scope === 'auth'}
-					{#if 'error' in form}
-						<p class="font-bold text-destructive">{form.error}</p>
-					{:else}
-						<p class="font-mono text-sm font-bold">Saved.</p>
-					{/if}
+				<p class="text-sm text-muted-foreground">
+					Turns on automatically once OUTLINE_URL, OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET and
+					OAUTH_REDIRECT_URI are set. People then sign in with Outline instead of picking a name;
+					their Outline name becomes their dabei name (an existing name with the same spelling is
+					linked on first login). Outline admins can open this page without the password.
+				</p>
+				{#if data.outline.redirectUri}
+					<p class="text-sm">
+						<span class="text-muted-foreground">Redirect URI to register in Outline:</span><br />
+						<code class="break-all">{data.outline.redirectUri}</code>
+					</p>
 				{/if}
-				<Button type="submit">Save login</Button>
-			</form>
+			</div>
 		</section>
 
 		<section class="space-y-4">
 			<h2 class="text-2xl font-bold">Team names</h2>
 			<p class="text-sm text-muted-foreground">
-				People pick their name on their first visit and choose their own color. They can also add
-				themselves.
+				{#if data.outline.configured}
+					Names are created automatically when people sign in with Outline. You can remove people
+					here.
+				{:else}
+					People pick their name on their first visit and choose their own color. They can also add
+					themselves.
+				{/if}
 			</p>
 			<ul class="max-w-md divide-y divide-foreground border border-foreground">
 				{#each data.members as member (member.id)}
@@ -185,21 +172,23 @@
 			</ul>
 		</section>
 
-		<section class="space-y-4">
-			<h2 class="text-2xl font-bold">Add name</h2>
-			<form method="POST" action="?/addMember" use:enhance class="max-w-md space-y-4">
-				<Input
-					name="name"
-					maxlength={MAX_NAME_LENGTH}
-					placeholder="Name"
-					aria-label="Name"
-					required
-				/>
-				{#if form?.scope === 'new' && 'error' in form}
-					<p class="font-bold text-destructive">{form.error}</p>
-				{/if}
-				<Button type="submit">Add name</Button>
-			</form>
-		</section>
+		{#if !data.outline.configured}
+			<section class="space-y-4">
+				<h2 class="text-2xl font-bold">Add name</h2>
+				<form method="POST" action="?/addMember" use:enhance class="max-w-md space-y-4">
+					<Input
+						name="name"
+						maxlength={MAX_NAME_LENGTH}
+						placeholder="Name"
+						aria-label="Name"
+						required
+					/>
+					{#if form?.scope === 'new' && 'error' in form}
+						<p class="font-bold text-destructive">{form.error}</p>
+					{/if}
+					<Button type="submit">Add name</Button>
+				</form>
+			</section>
+		{/if}
 	{/if}
 </main>

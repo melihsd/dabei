@@ -1,6 +1,7 @@
 import { text } from '@sveltejs/kit';
 import type { Handle } from '@sveltejs/kit/hooks';
-import { getActiveMember, getSettings } from '#lib/server/db/queries.js';
+import { getActiveMember } from '#lib/server/db/queries.js';
+import { outlineConfigured } from '#lib/server/outline.js';
 import { readMemberId, readSessionMemberId } from '#lib/server/identity.js';
 
 const MUTATING = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
@@ -35,7 +36,7 @@ export const handle: Handle = ({ event, resolve }) => {
 	}
 
 	// With login required, only the signed session counts; the plain name cookie is ignored.
-	event.locals.authRequired = Boolean(getSettings()?.authRequired);
+	event.locals.authRequired = outlineConfigured();
 	const id = event.locals.authRequired
 		? readSessionMemberId(event.cookies)
 		: readMemberId(event.cookies);

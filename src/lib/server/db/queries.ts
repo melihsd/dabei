@@ -98,6 +98,10 @@ export function memberNameExists(name: string) {
 	return getAllMembers().some((m) => m.name.toLowerCase() === name.toLowerCase());
 }
 
+export function renameMember(id: number, name: string) {
+	db.update(members).set({ name }).where(eq(members.id, id)).run();
+}
+
 export function updateMemberColor(id: number, color: string) {
 	db.update(members).set({ color }).where(eq(members.id, id)).run();
 }
@@ -111,15 +115,22 @@ export function updateSettings(values: { mode: 'day' | 'slots'; slots: string; w
 	db.update(settings).set(values).where(eq(settings.id, 1)).run();
 }
 
-export function setAuthRequired(authRequired: boolean) {
-	db.update(settings).set({ authRequired }).where(eq(settings.id, 1)).run();
-}
-
 /**
  * Finds the member for an Outline user. First login either claims an existing name
  * (same name, not yet linked) or creates a new member.
  */
-export function memberForOutlineUser(user: { id: string; name: string }) {
+export function memberForOutlineUser(user: { id: string; name: string; isAdmin: boolean }) {
+	const member = findOrCreateOutlineMember(user);
+	if (member.outlineAdmin === user.isAdmin) return member;
+	return db
+		.update(members)
+		.set({ outlineAdmin: user.isAdmin })
+		.where(eq(members.id, member.id))
+		.returning()
+		.get();
+}
+
+function findOrCreateOutlineMember(user: { id: string; name: string }) {
 	const linked = db.select().from(members).where(eq(members.outlineId, user.id)).get();
 	if (linked) return linked;
 

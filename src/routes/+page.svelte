@@ -97,12 +97,24 @@
 				<Popover bind:open={colorOpen}>
 					<PopoverTrigger
 						class="flex cursor-pointer items-center gap-2"
-						aria-label="Change your color"
+						aria-label={data.authRequired ? 'Change your color' : 'Edit your name and color'}
 					>
 						<span class="size-4" style="background: {data.member.color}"></span>
 						<span class="text-muted-foreground">{data.member.name}</span>
 					</PopoverTrigger>
-					<PopoverContent class="w-auto">
+					<PopoverContent class="w-auto space-y-3">
+						{#if !data.authRequired}
+							<form method="POST" action="?/rename" use:enhance class="flex gap-2">
+								<Input
+									name="name"
+									value={data.member.name}
+									maxlength={MAX_NAME_LENGTH}
+									required
+									aria-label="Your name"
+								/>
+								<Button type="submit">Save</Button>
+							</form>
+						{/if}
 						<form
 							method="POST"
 							action="?/color"

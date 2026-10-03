@@ -8,6 +8,7 @@ import {
 	getSettings,
 	setNote,
 	togglePresence,
+	renameMember,
 	updateMemberColor
 } from '#lib/server/db/queries.js';
 import { isValidColor, parseMemberName } from '#lib/settings.js';
@@ -96,6 +97,20 @@ export const actions: Actions = {
 		if (!isValidColor(color)) return fail(400, { error: 'Pick a color.' });
 
 		updateMemberColor(locals.member.id, color);
+		return { ok: true };
+	},
+
+	rename: async ({ request, locals }) => {
+		if (locals.authRequired) return fail(403, { error: 'Your name comes from Outline.' });
+		if (!locals.member) return fail(401, { error: 'Pick your name first.' });
+
+		const name = parseMemberName((await request.formData()).get('name'));
+		if (!name) return fail(400, { error: `Name must be 1-${MAX_NAME_LENGTH} characters.` });
+		if (name.toLowerCase() !== locals.member.name.toLowerCase() && memberNameExists(name)) {
+			return fail(400, { error: 'That name is taken.' });
+		}
+
+		renameMember(locals.member.id, name);
 		return { ok: true };
 	},
 

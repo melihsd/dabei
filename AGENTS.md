@@ -53,5 +53,5 @@ chore: configure drizzle with sqlite
 - No hardcoded names, colors, slots or workdays – always from the database (settings / members).
 - UI components live in `src/lib/components/ui/`, built by us (see skill `brutalist-component`). shadcn-svelte provides the setup (`cn()`, tokens, bits-ui primitives) – never ship a stock shadcn component with its default look.
 - No `rounded-*`, no pastel colors, no soft shadows.
-- No external database and no external services. The only external call is the optional Outline login (OAuth), switched on in settings; it stays off by default.
+- No external database and no external services. The only external call is the optional Outline login (OAuth), on automatically when its env vars are set.
 - No automated tests for now – manual QA.

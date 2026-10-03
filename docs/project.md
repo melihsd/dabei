@@ -18,7 +18,7 @@ A small self-hosted planner for teams: everyone marks when they're in – full d
 | Components | shadcn-svelte setup + bits-ui          | Own components, own look – see "Design"                        |
 | Icons      | unplugin-icons + Iconify (`line-md`)   | `~icons/...` imports, compiled to Svelte at build, no runtime  |
 | Database   | SQLite + Drizzle ORM                   | `bun:sqlite`, one file, no external service                    |
-| Identity   | Name picker + cookie, or Outline login | No accounts, no passwords. Outline login is optional (setting) |
+| Identity   | Name picker + cookie, or Outline login | No accounts, no passwords. Outline login is optional (env vars) |
 | Admin      | `ADMIN_PASSWORD` env                   | Protects the settings page only                                |
 | Deploy     | Docker Compose (`oven/bun` image)      | Hetzner, SQLite file on a volume                               |
 
@@ -64,16 +64,16 @@ Why Drizzle instead of Prisma: lighter, no query engine binary or native addon i
 ### Onboarding
 
 - First visit: "Who are you?" – pick a name from the list, or add yourself (name + color) if you're not in it
-- Everyone chooses their own color and can change it any time via the color square in the header
+- Everyone can change their own name and color any time via the color square + name in the header
 - Member id stored in a cookie (long-lived, httpOnly)
 - "Not you?" link to switch
 
-### Login via Outline (optional setting)
+### Login via Outline (optional, automatic)
 
-- Settings → "Require login via Outline" (off by default). Needs the `OUTLINE_URL`, `OAUTH_CLIENT_ID`, `OAUTH_CLIENT_SECRET` and `OAUTH_REDIRECT_URI` env vars; it cannot be switched on without them
+- Turns on automatically once the `OUTLINE_URL`, `OAUTH_CLIENT_ID`, `OAUTH_CLIENT_SECRET` and `OAUTH_REDIRECT_URI` env vars are set; stays off otherwise. No toggle
 - Direct OAuth with Outline (authorize, token, `users.info`). No other service involved
 - While on: the name picker and self-registration are disabled, people sign in with Outline. First login links the Outline user to an existing name with the same spelling, or creates a member from their Outline name (they pick their own color). Identity is a signed cookie (`COOKIE_SECRET`)
-- `/settings` stays behind `ADMIN_PASSWORD`, independent of the Outline login
+- `/settings` is open to Outline admins (role read from `users.info` on every login, stored as `members.outline_admin`) and, as before, to anyone with `ADMIN_PASSWORD`
 
 ### Live updates
 

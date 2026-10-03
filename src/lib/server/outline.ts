@@ -5,7 +5,7 @@ import {
 	OUTLINE_URL
 } from '$app/env/private';
 
-export type OutlineUser = { id: string; name: string; email: string };
+export type OutlineUser = { id: string; name: string; email: string; isAdmin: boolean };
 
 export function outlineConfigured() {
 	return Boolean(OUTLINE_URL && OAUTH_CLIENT_ID && OAUTH_CLIENT_SECRET && OAUTH_REDIRECT_URI);
@@ -56,5 +56,10 @@ export async function fetchOutlineUser(code: string): Promise<OutlineUser> {
 	const body = await res.json();
 	const user = body.data ?? body;
 	if (!user?.id || !user?.name) throw new Error('Outline returned no user');
-	return { id: String(user.id), name: String(user.name), email: String(user.email ?? '') };
+	return {
+		id: String(user.id),
+		name: String(user.name),
+		email: String(user.email ?? ''),
+		isAdmin: user.role === 'admin' || user.isAdmin === true
+	};
 }

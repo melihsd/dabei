@@ -3,7 +3,7 @@ import {
 	adminConfigured,
 	checkPassword,
 	endAdminSession,
-	isAdmin,
+	canAdmin,
 	startAdminSession
 } from '#lib/server/admin.js';
 import {
@@ -12,7 +12,6 @@ import {
 	getSettings,
 	deleteMember,
 	memberNameExists,
-	setAuthRequired,
 	updateSettings
 } from '#lib/server/db/queries.js';
 import { outlineConfigured, outlineRedirectUri } from '#lib/server/outline.js';
@@ -21,8 +20,8 @@ import { MAX_NAME_LENGTH, MEMBER_COLORS } from '#lib/constants.js';
 import { isValidSlot, isWeekday, parseMemberName } from '#lib/settings.js';
 import type { Actions, PageServerLoad } from './$types';
 
-export const load: PageServerLoad = ({ cookies }) => {
-	if (!isAdmin(cookies)) return { admin: false as const, configured: adminConfigured() };
+export const load: PageServerLoad = (event) => {
+	if (!canAdmin(event)) return { admin: false as const, configured: adminConfigured() };
 
 	return {
 		admin: true as const,
@@ -47,10 +46,10 @@ export const actions: Actions = {
 		redirect(303, '/settings');
 	},
 
-	saveSettings: async ({ request, cookies }) => {
-		if (!isAdmin(cookies)) return fail(401, { scope: 'settings', error: 'Not signed in.' });
+	saveSettings: async (event) => {
+		if (!canAdmin(event)) return fail(401, { scope: 'settings', error: 'Not signed in.' });
 
-		const data = await request.formData();
+		const data = await event.request.formData();
 		const mode = data.get('mode');
 		const workdays = data.getAll('workdays').map(String).filter(isWeekday);
 		const slots = String(data.get('slots') ?? '')
@@ -83,26 +82,13 @@ export const actions: Actions = {
 		return { scope: 'settings', saved: true };
 	},
 
-	saveAuth: async ({ request, cookies }) => {
-		if (!isAdmin(cookies)) return fail(401, { scope: 'auth', error: 'Not signed in.' });
-
-		const enable = (await request.formData()).get('authRequired') === 'on';
-		if (enable && !outlineConfigured()) {
-			return fail(400, {
-				scope: 'auth',
-				error:
-					'Set OUTLINE_URL, OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET and OAUTH_REDIRECT_URI on the server first.'
-			});
+	addMember: async (event) => {
+		if (!canAdmin(event)) return fail(401, { scope: 'new', error: 'Not signed in.' });
+		if (event.locals.authRequired) {
+			return fail(403, { scope: 'new', error: 'Names come from Outline login.' });
 		}
 
-		setAuthRequired(enable);
-		return { scope: 'auth', saved: true };
-	},
-
-	addMember: async ({ request, cookies }) => {
-		if (!isAdmin(cookies)) return fail(401, { scope: 'new', error: 'Not signed in.' });
-
-		const name = parseMemberName((await request.formData()).get('name'));
+		const name = parseMemberName((await event.request.formData()).get('name'));
 		if (!name) {
 			return fail(400, { scope: 'new', error: `Name must be 1-${MAX_NAME_LENGTH} characters.` });
 		}
@@ -113,10 +99,10 @@ export const actions: Actions = {
 		return { scope: 'new', saved: true };
 	},
 
-	removeMember: async ({ request, cookies }) => {
-		if (!isAdmin(cookies)) return fail(401, { scope: 'member', error: 'Not signed in.' });
+	removeMember: async (event) => {
+		if (!canAdmin(event)) return fail(401, { scope: 'member', error: 'Not signed in.' });
 
-		const id = Number((await request.formData()).get('id'));
+		const id = Number((await event.request.formData()).get('id'));
 		if (!Number.isInteger(id)) return fail(400, { scope: 'member', error: 'Invalid member.' });
 
 		deleteMember(id);
