@@ -28,12 +28,12 @@ export function endAdminSession(cookies: Cookies) {
 	cookies.delete(ADMIN_COOKIE, { path: '/' });
 }
 
-/** Admin by password cookie, or (while Outline login is on) by Outline admin role. */
+/** With Outline login on, only the Outline admin role counts; otherwise only the password session. */
 export function canAdmin(event: {
 	cookies: Cookies;
 	locals: { member: { outlineAdmin: boolean } | null; authRequired: boolean };
 }) {
-	if (event.locals.authRequired && event.locals.member?.outlineAdmin) return true;
+	if (event.locals.authRequired) return Boolean(event.locals.member?.outlineAdmin);
 	return isAdmin(event.cookies);
 }
 

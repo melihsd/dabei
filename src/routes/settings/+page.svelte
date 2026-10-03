@@ -18,7 +18,7 @@
 		<h1 class="text-4xl font-bold tracking-tight">Settings</h1>
 		<div class="flex gap-3">
 			<Button href={resolve('/')} variant="outline" size="sm">Back</Button>
-			{#if data.admin}
+			{#if data.admin && !data.sso}
 				<form method="POST" action="?/logout" use:enhance>
 					<Button type="submit" variant="outline" size="sm">Sign out</Button>
 				</form>
@@ -27,23 +27,16 @@
 	</header>
 
 	{#if !data.admin}
-		{#if !data.configured}
-			<p class="border border-destructive p-4 font-bold text-destructive">
-				Password login is disabled because ADMIN_PASSWORD is not set. Set it, or sign in with
-				Outline as an admin.
-			</p>
-		{:else}
-			<form method="POST" action="?/login" use:enhance class="max-w-sm space-y-4">
-				<label class="block space-y-2">
-					<span class="font-mono text-sm font-bold uppercase">Admin password</span>
-					<Input type="password" name="password" autocomplete="current-password" required />
-				</label>
-				{#if form?.scope === 'login'}
-					<p class="font-bold text-destructive">{form.error}</p>
-				{/if}
-				<Button type="submit">Sign in</Button>
-			</form>
-		{/if}
+		<form method="POST" action="?/login" use:enhance class="max-w-sm space-y-4">
+			<label class="block space-y-2">
+				<span class="font-mono text-sm font-bold uppercase">Admin password</span>
+				<Input type="password" name="password" autocomplete="current-password" required />
+			</label>
+			{#if form?.scope === 'login'}
+				<p class="font-bold text-destructive">{form.error}</p>
+			{/if}
+			<Button type="submit">Sign in</Button>
+		</form>
 	{:else}
 		<section class="space-y-4">
 			<h2 class="text-2xl font-bold">Planner</h2>
@@ -126,7 +119,8 @@
 					Turns on automatically once OUTLINE_URL, OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET and
 					OAUTH_REDIRECT_URI are set. People then sign in with Outline instead of picking a name;
 					their Outline name becomes their dabei name (an existing name with the same spelling is
-					linked on first login). Outline admins can open this page without the password.
+					linked on first login). While it is on, only Outline admins can open this page; the admin
+					password is not used.
 				</p>
 				{#if data.outline.redirectUri}
 					<p class="text-sm">

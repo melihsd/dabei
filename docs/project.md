@@ -10,17 +10,17 @@ A small self-hosted planner for teams: everyone marks when they're in – full d
 
 ## Tech Stack
 
-| Part       | Choice                                 | Note                                                           |
-| ---------- | -------------------------------------- | -------------------------------------------------------------- |
-| Runtime    | Bun                                    | Package manager, dev and production runtime                    |
-| Framework  | SvelteKit (Svelte 5, TS)               | `adapter-bun`, run with Bun                                    |
-| Styling    | Tailwind CSS v4                        | Design tokens as CSS variables                                 |
-| Components | shadcn-svelte setup + bits-ui          | Own components, own look – see "Design"                        |
-| Icons      | unplugin-icons + Iconify (`line-md`)   | `~icons/...` imports, compiled to Svelte at build, no runtime  |
-| Database   | SQLite + Drizzle ORM                   | `bun:sqlite`, one file, no external service                    |
+| Part       | Choice                                 | Note                                                            |
+| ---------- | -------------------------------------- | --------------------------------------------------------------- |
+| Runtime    | Bun                                    | Package manager, dev and production runtime                     |
+| Framework  | SvelteKit (Svelte 5, TS)               | `adapter-bun`, run with Bun                                     |
+| Styling    | Tailwind CSS v4                        | Design tokens as CSS variables                                  |
+| Components | shadcn-svelte setup + bits-ui          | Own components, own look – see "Design"                         |
+| Icons      | unplugin-icons + Iconify (`line-md`)   | `~icons/...` imports, compiled to Svelte at build, no runtime   |
+| Database   | SQLite + Drizzle ORM                   | `bun:sqlite`, one file, no external service                     |
 | Identity   | Name picker + cookie, or Outline login | No accounts, no passwords. Outline login is optional (env vars) |
-| Admin      | `ADMIN_PASSWORD` env                   | Protects the settings page only                                |
-| Deploy     | Docker Compose (`oven/bun` image)      | Hetzner, SQLite file on a volume                               |
+| Admin      | `ADMIN_PASSWORD` env                   | Protects the settings page only                                 |
+| Deploy     | Docker Compose (`oven/bun` image)      | Hetzner, SQLite file on a volume                                |
 
 Why Drizzle instead of Prisma: lighter, no query engine binary or native addon in the Docker image, scaffolded by `sv add`, schema is plain TypeScript.
 
@@ -73,7 +73,7 @@ Why Drizzle instead of Prisma: lighter, no query engine binary or native addon i
 - Turns on automatically once the `OUTLINE_URL`, `OAUTH_CLIENT_ID`, `OAUTH_CLIENT_SECRET` and `OAUTH_REDIRECT_URI` env vars are set; stays off otherwise. No toggle
 - Direct OAuth with Outline (authorize, token, `users.info`). No other service involved
 - While on: the name picker and self-registration are disabled, people sign in with Outline. First login links the Outline user to an existing name with the same spelling, or creates a member from their Outline name (they pick their own color). Identity is a signed cookie (`COOKIE_SECRET`). The name is re-synced from Outline on every login; to change it, the header links to the Outline profile (`/settings`)
-- The Settings link is only shown to admins. `/settings` is open to Outline admins (role read from `users.info` on every login, stored as `members.outline_admin`) and, as before, to anyone with `ADMIN_PASSWORD`
+- The Settings link is only shown to admins. With Outline login on, `/settings` is open only to Outline admins (role read from `users.info` on every login, stored as `members.outline_admin`); there is no password field. Without it, `/settings` needs `ADMIN_PASSWORD`; if none is set, nobody gets in and non-admins are silently redirected home
 
 ### Live updates
 

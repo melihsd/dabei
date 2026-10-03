@@ -21,10 +21,15 @@ import { isValidSlot, isWeekday, parseMemberName } from '#lib/settings.js';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = (event) => {
-	if (!canAdmin(event)) return { admin: false as const, configured: adminConfigured() };
+	if (!canAdmin(event)) {
+		// Nothing to sign in with: SSO decides by role, and no password means no admin access.
+		if (event.locals.authRequired || !adminConfigured()) redirect(303, '/');
+		return { admin: false as const, sso: false };
+	}
 
 	return {
 		admin: true as const,
+		sso: event.locals.authRequired,
 		settings: getSettings(),
 		outline: { configured: outlineConfigured(), redirectUri: outlineRedirectUri ?? null },
 		members: getAllMembers()
@@ -32,7 +37,9 @@ export const load: PageServerLoad = (event) => {
 };
 
 export const actions: Actions = {
-	login: async ({ request, cookies }) => {
+	login: async ({ request, cookies, locals }) => {
+		if (locals.authRequired || !adminConfigured())
+			return fail(403, { scope: 'login', error: 'Not available.' });
 		const data = await request.formData();
 		if (!checkPassword(String(data.get('password') ?? ''))) {
 			return fail(401, { scope: 'login', error: 'Wrong password.' });
