@@ -10,7 +10,7 @@ export function adminConfigured() {
 }
 
 export function checkPassword(candidate: string) {
-	return adminConfigured() && safeEqual(candidate, ADMIN_PASSWORD);
+	return Boolean(ADMIN_PASSWORD) && safeEqual(candidate, ADMIN_PASSWORD ?? '');
 }
 
 export function startAdminSession(cookies: Cookies) {

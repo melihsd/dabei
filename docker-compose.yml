@@ -7,7 +7,7 @@ services:
     ports:
       - '${PORT:-3000}:3000'
     environment:
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?set ADMIN_PASSWORD}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
       COOKIE_SECRET: ${COOKIE_SECRET:-}
       # Optional: sign in with Outline
       OUTLINE_URL: ${OUTLINE_URL:-}

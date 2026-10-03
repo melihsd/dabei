@@ -5,7 +5,10 @@ const optional = (value: string | undefined) => value || undefined;
 
 export const variables = defineEnvVars({
 	DATABASE_URL: { description: 'Path to the SQLite file.' },
-	ADMIN_PASSWORD: { description: 'Password for the settings page.' },
+	ADMIN_PASSWORD: {
+		schema: optional,
+		description: 'Password for the settings page. Empty disables password login.'
+	},
 	COOKIE_SECRET: {
 		schema: optional,
 		description: 'Secret used to sign the admin and login cookies. Generated per start if empty.'
