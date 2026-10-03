@@ -1,12 +1,12 @@
 import type { Cookies } from '@sveltejs/kit';
-import { ADMIN_PASSWORD, COOKIE_SECRET } from '$app/env/private';
+import { ADMIN_PASSWORD } from '$app/env/private';
 import { safeEqual, sign } from './signing.js';
 
 const ADMIN_COOKIE = 'dabei_admin';
 const SESSION_SECONDS = 60 * 60 * 12;
 
 export function adminConfigured() {
-	return Boolean(ADMIN_PASSWORD && COOKIE_SECRET);
+	return Boolean(ADMIN_PASSWORD);
 }
 
 export function checkPassword(candidate: string) {

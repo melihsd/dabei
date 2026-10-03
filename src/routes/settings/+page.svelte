@@ -29,7 +29,7 @@
 	{#if !data.admin}
 		{#if !data.configured}
 			<p class="border border-destructive p-4 font-bold text-destructive">
-				ADMIN_PASSWORD and COOKIE_SECRET are not set on the server.
+				ADMIN_PASSWORD is not set on the server.
 			</p>
 		{:else}
 			<form method="POST" action="?/login" use:enhance class="max-w-sm space-y-4">

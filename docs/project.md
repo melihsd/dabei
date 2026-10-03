@@ -157,7 +157,7 @@ Use bits-ui primitives under the hood where accessibility matters (Dialog, Popov
 ```
 DATABASE_URL="file:./data/dabei.db"
 ADMIN_PASSWORD=""
-COOKIE_SECRET=""
+COOKIE_SECRET=""   # optional; generated per start if empty
 ```
 
 `.env` never in git. `.env.example` with empty values.

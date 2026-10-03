@@ -26,11 +26,11 @@ Bun · SvelteKit (Svelte 5) · Tailwind CSS v4 · bits-ui · SQLite (`bun:sqlite
 
 ## Environment variables
 
-| Variable         | Description                                               |
-| ---------------- | --------------------------------------------------------- |
-| `DATABASE_URL`   | Path to the SQLite file, e.g. `./data/dabei.db`           |
-| `ADMIN_PASSWORD` | Password for the `/settings` page                         |
-| `COOKIE_SECRET`  | Long random string that signs the admin and login cookies |
+| Variable         | Description                                                                                                      |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `DATABASE_URL`   | Path to the SQLite file, e.g. `./data/dabei.db`                                                                  |
+| `ADMIN_PASSWORD` | Password for the `/settings` page                                                                                |
+| `COOKIE_SECRET`  | Signs admin and login cookies. Optional: if empty, a temporary one is generated per start and printed in the log |
 
 Copy `.env.example` to `.env` and fill it in. `.env` is never committed.
 
@@ -48,7 +48,7 @@ People then sign in with Outline. Their Outline name becomes their dabei name (a
 
 ```sh
 bun install
-cp .env.example .env     # then set ADMIN_PASSWORD and COOKIE_SECRET
+cp .env.example .env     # then set ADMIN_PASSWORD
 bun run dev               # migrations run automatically on start
 # optional: bun run db:seed  (3 placeholder members)
 ```
