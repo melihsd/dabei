@@ -3,11 +3,14 @@
 	import { resolve } from '$app/paths';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import { Input } from '#lib/components/ui/input/index.js';
+	import { Switch } from '#lib/components/ui/switch/index.js';
 	import { Textarea } from '#lib/components/ui/textarea/index.js';
 	import { WEEKDAYS, parseSlots, parseWorkdays } from '#lib/dates.js';
 	import { MAX_NAME_LENGTH } from '#lib/constants.js';
 
 	let { data, form } = $props();
+
+	let mode = $derived(data.settings?.mode);
 
 	const chipLabel =
 		'flex min-h-11 cursor-pointer items-center border border-foreground px-4 font-mono text-sm font-bold uppercase has-checked:bg-foreground has-checked:text-background has-focus-visible:outline-2 has-focus-visible:outline-offset-2';
@@ -49,24 +52,6 @@
 				class="space-y-6"
 			>
 				<fieldset class="space-y-2">
-					<legend class="font-mono text-sm font-bold uppercase">Mode</legend>
-					<div class="flex flex-wrap gap-2">
-						{#each [['day', 'Full days'], ['slots', 'Time slots']] as [value, label] (value)}
-							<label class={chipLabel}>
-								<input
-									type="radio"
-									name="mode"
-									{value}
-									checked={data.settings?.mode === value}
-									class="sr-only"
-								/>
-								{label}
-							</label>
-						{/each}
-					</div>
-				</fieldset>
-
-				<fieldset class="space-y-2">
 					<legend class="font-mono text-sm font-bold uppercase">Workdays</legend>
 					<div class="flex flex-wrap gap-2">
 						{#each WEEKDAYS as day (day)}
@@ -84,13 +69,26 @@
 					</div>
 				</fieldset>
 
-				<label class="block space-y-2">
-					<span class="font-mono text-sm font-bold uppercase">Time slots (one per line)</span>
+				<div class="flex items-center gap-3">
+					<Switch
+						checked={mode === 'slots'}
+						onCheckedChange={(on) => (mode = on ? 'slots' : 'day')}
+						aria-labelledby="slots-switch-label"
+					/>
+					<span id="slots-switch-label" class="font-mono text-sm font-bold uppercase">
+						Enable time slots
+					</span>
+					<input type="hidden" name="mode" value={mode} />
+				</div>
+
+				<label class={['block space-y-2', mode !== 'slots' && 'opacity-40']}>
+					<span class="font-mono text-sm font-bold uppercase">Slots (one per line)</span>
 					<Textarea
 						name="slots"
 						rows={3}
 						value={parseSlots(data.settings?.slots ?? '').join('\n')}
 						placeholder="09:00-13:00"
+						readonly={mode !== 'slots'}
 						class="max-w-xs font-mono"
 					/>
 				</label>
