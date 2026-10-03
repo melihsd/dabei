@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM oven/bun:1 AS build
+FROM oven/bun:1-alpine AS build
 WORKDIR /app
 COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
@@ -8,12 +8,12 @@ COPY . .
 # SvelteKit validates env vars at build time; the real values are read at runtime.
 RUN DATABASE_URL=build ADMIN_PASSWORD=build COOKIE_SECRET=build bun run build
 
-FROM oven/bun:1 AS prod-deps
+FROM oven/bun:1-alpine AS prod-deps
 WORKDIR /app
 COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile --production --ignore-scripts
 
-FROM oven/bun:1
+FROM oven/bun:1-alpine
 WORKDIR /app
 ENV NODE_ENV=production \
     HOST=0.0.0.0 \
