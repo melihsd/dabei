@@ -121,13 +121,26 @@ export function updateSettings(values: { mode: 'day' | 'slots'; slots: string; w
  */
 export function memberForOutlineUser(user: { id: string; name: string; isAdmin: boolean }) {
 	const member = findOrCreateOutlineMember(user);
-	if (member.outlineAdmin === user.isAdmin) return member;
+	const name = uniqueName(user.name, member.id);
+	if (member.outlineAdmin === user.isAdmin && member.name === name) return member;
 	return db
 		.update(members)
-		.set({ outlineAdmin: user.isAdmin })
+		.set({ outlineAdmin: user.isAdmin, name })
 		.where(eq(members.id, member.id))
 		.returning()
 		.get();
+}
+
+/** The Outline name, shortened to fit and numbered if another member already has it. */
+function uniqueName(raw: string, ownId?: number) {
+	const name = raw.trim().slice(0, MAX_NAME_LENGTH) || 'Guest';
+	const taken = (candidate: string) =>
+		getAllMembers().some((m) => m.id !== ownId && m.name.toLowerCase() === candidate.toLowerCase());
+	let unique = name;
+	for (let n = 2; taken(unique); n++) {
+		unique = `${name.slice(0, MAX_NAME_LENGTH - String(n).length - 1)} ${n}`;
+	}
+	return unique;
 }
 
 function findOrCreateOutlineMember(user: { id: string; name: string }) {

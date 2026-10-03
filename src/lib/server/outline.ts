@@ -15,6 +15,9 @@ export const outlineRedirectUri = OAUTH_REDIRECT_URI;
 
 const base = () => (OUTLINE_URL ?? '').replace(/\/+$/, '');
 
+/** Where people change their name: their Outline profile. */
+export const outlineProfileUrl = () => `${base()}/settings`;
+
 export function authorizationUrl(state: string) {
 	const url = new URL(`${base()}/oauth/authorize`);
 	url.searchParams.set('response_type', 'code');

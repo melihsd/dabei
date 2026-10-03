@@ -91,19 +91,30 @@
 			<h1 class="text-2xl font-bold">dabei</h1>
 			<div class="flex items-center gap-4 text-sm">
 				<ThemeToggle />
-				<a href={resolve('/settings')} class="text-muted-foreground hover:text-foreground">
-					Settings
-				</a>
+				{#if data.isAdmin}
+					<a href={resolve('/settings')} class="text-muted-foreground hover:text-foreground">
+						Settings
+					</a>
+				{/if}
 				<Popover bind:open={colorOpen}>
 					<PopoverTrigger
 						class="flex cursor-pointer items-center gap-2"
-						aria-label={data.authRequired ? 'Change your color' : 'Edit your name and color'}
+						aria-label="Edit your name and color"
 					>
 						<span class="size-4" style="background: {data.member.color}"></span>
 						<span class="text-muted-foreground">{data.member.name}</span>
 					</PopoverTrigger>
 					<PopoverContent class="w-auto space-y-3">
-						{#if !data.authRequired}
+						{#if data.profileUrl}
+							<a
+								href={data.profileUrl}
+								target="_blank"
+								rel="noreferrer"
+								class="block underline hover:text-muted-foreground"
+							>
+								Change username
+							</a>
+						{:else}
 							<form method="POST" action="?/rename" use:enhance class="flex gap-2">
 								<Input
 									name="name"

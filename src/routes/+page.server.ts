@@ -13,7 +13,8 @@ import {
 } from '#lib/server/db/queries.js';
 import { isValidColor, parseMemberName } from '#lib/settings.js';
 import type { Settings } from '#lib/server/db/schema.js';
-import { outlineConfigured } from '#lib/server/outline.js';
+import { canAdmin } from '#lib/server/admin.js';
+import { outlineConfigured, outlineProfileUrl } from '#lib/server/outline.js';
 import { clearMemberCookie, setMemberCookie } from '#lib/server/identity.js';
 import {
 	defaultWeek,
@@ -27,7 +28,7 @@ import {
 import { ENTRY_EMOJIS, MAX_COMMENT_LENGTH, MAX_NAME_LENGTH } from '#lib/constants.js';
 import type { Actions, PageServerLoad } from './$types';
 
-export const load: PageServerLoad = ({ locals, url }) => {
+export const load: PageServerLoad = ({ locals, url, cookies }) => {
 	if (!locals.member) {
 		return {
 			member: null,
@@ -51,6 +52,8 @@ export const load: PageServerLoad = ({ locals, url }) => {
 		member: locals.member,
 		members: [],
 		authRequired: locals.authRequired,
+		isAdmin: canAdmin({ cookies, locals }),
+		profileUrl: locals.authRequired ? outlineProfileUrl() : null,
 		week,
 		mode: settings.mode,
 		slots: parseSlots(settings.slots),
