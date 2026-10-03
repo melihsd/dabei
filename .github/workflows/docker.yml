@@ -48,3 +48,8 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      # Runs only after the image is pushed, so Dokploy never pulls a stale :latest.
+      - name: Deploy on Dokploy
+        if: github.ref == 'refs/heads/main'
+        run: curl -fsS -X POST "${{ secrets.DOKPLOY_DEPLOY_URL }}"
