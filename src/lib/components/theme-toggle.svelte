@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import MoonToSunnyOutlineTransitionIcon from '~icons/line-md/moon-to-sunny-outline-transition';
+	import SunnyOutlineToMoonTransitionIcon from '~icons/line-md/sunny-outline-to-moon-transition';
 
 	let dark = $state(false);
 
@@ -22,7 +24,12 @@
 	type="button"
 	onclick={toggle}
 	aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
-	class="flex size-7 cursor-pointer items-center justify-center border border-foreground text-sm hover:bg-foreground hover:text-background"
+	class="flex size-8 cursor-pointer items-center justify-center text-2xl hover:opacity-60 motion-safe:transition-opacity motion-safe:duration-100"
 >
-	{dark ? '☀' : '☾'}
+	<!-- The icon shows the mode you'd switch to; swapping components replays its morph animation. -->
+	{#if dark}
+		<MoonToSunnyOutlineTransitionIcon />
+	{:else}
+		<SunnyOutlineToMoonTransitionIcon />
+	{/if}
 </button>

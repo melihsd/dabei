@@ -16,6 +16,7 @@ A small self-hosted planner for teams: everyone marks when they're in – full d
 | Framework  | SvelteKit (Svelte 5, TS)               | `adapter-bun`, run with Bun                                    |
 | Styling    | Tailwind CSS v4                        | Design tokens as CSS variables                                 |
 | Components | shadcn-svelte setup + bits-ui          | Own components, own look – see "Design"                        |
+| Icons      | unplugin-icons + Iconify (`line-md`)   | `~icons/...` imports, compiled to Svelte at build, no runtime  |
 | Database   | SQLite + Drizzle ORM                   | `bun:sqlite`, one file, no external service                    |
 | Identity   | Name picker + cookie, or Outline login | No accounts, no passwords. Outline login is optional (setting) |
 | Admin      | `ADMIN_PASSWORD` env                   | Protects the settings page only                                |

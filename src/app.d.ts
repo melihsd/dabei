@@ -1,3 +1,5 @@
+/// <reference types="unplugin-icons/types/svelte" />
+
 import type { Member } from '#lib/server/db/schema.js';
 
 declare global {
