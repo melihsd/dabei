@@ -34,7 +34,7 @@
 	}}
 >
 	<PopoverTrigger class="cursor-pointer" aria-label="Edit your note">
-		<Chip {color} own note={Boolean(comment)}>{[name, ...emojis].join(' ')}</Chip>
+		<Chip {color} note={Boolean(comment)}>{[name, ...emojis].join(' ')}</Chip>
 	</PopoverTrigger>
 	<PopoverContent>
 		<form

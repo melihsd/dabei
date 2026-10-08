@@ -7,6 +7,9 @@ export type WeekDay = {
 	weekday: Weekday;
 	label: string;
 	dateLabel: string;
+	/** Before today: shown disabled, cannot be changed. */
+	past: boolean;
+	today: boolean;
 };
 
 /** ISO date (YYYY-MM-DD) from local date parts, never via UTC. */
@@ -56,22 +59,31 @@ export function parseSlots(slots: string): string[] {
 		.filter(Boolean);
 }
 
-export function weekDays(monday: Date, workdays: Weekday[]): WeekDay[] {
+export function weekDays(monday: Date, workdays: Weekday[], today: Date): WeekDay[] {
+	const todayIso = toISODate(today);
 	const weekday = new Intl.DateTimeFormat('en', { weekday: 'short' });
 	return workdays.map((w) => {
 		const d = new Date(monday);
 		d.setDate(monday.getDate() + WEEKDAYS.indexOf(w));
 		const dd = String(d.getDate()).padStart(2, '0');
 		const mm = String(d.getMonth() + 1).padStart(2, '0');
-		return { iso: toISODate(d), weekday: w, label: weekday.format(d), dateLabel: `${dd}.${mm}.` };
+		const iso = toISODate(d);
+		return {
+			iso,
+			weekday: w,
+			label: weekday.format(d),
+			dateLabel: `${dd}.${mm}.`,
+			past: iso < todayIso,
+			today: iso === todayIso
+		};
 	});
 }
 
-/** True if `iso` is a configured workday in this week or next week. */
+/** True if `iso` is a configured workday from today until the end of next week. */
 export function isBookableDate(iso: string, today: Date, workdays: Weekday[]): boolean {
 	const date = parseISODate(iso);
 	if (!date || !workdays.includes(weekdayOf(date))) return false;
-	const start = weekMonday(today, 'this');
+	const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 	const end = weekMonday(today, 'next');
 	end.setDate(end.getDate() + 6);
 	return date >= start && date <= end;

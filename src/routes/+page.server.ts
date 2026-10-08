@@ -46,7 +46,7 @@ export const load: PageServerLoad = ({ locals, url, cookies }) => {
 	const today = new Date();
 	const param = url.searchParams.get('week');
 	const week: WeekKey = param === 'this' || param === 'next' ? param : defaultWeek(today);
-	const days = weekDays(weekMonday(today, week), parseWorkdays(settings.workdays));
+	const days = weekDays(weekMonday(today, week), parseWorkdays(settings.workdays), today);
 
 	return {
 		member: locals.member,

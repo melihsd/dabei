@@ -54,7 +54,7 @@
 								class="cursor-pointer"
 								aria-label={member.name}
 							>
-								<Chip color={member.color} own>{member.name}</Chip>
+								<Chip color={member.color}>{member.name}</Chip>
 							</button>
 						{/each}
 					</form>

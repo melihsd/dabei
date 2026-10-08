@@ -107,11 +107,11 @@
 	<section class="space-y-4">
 		<h2 class="text-2xl font-bold">Chip</h2>
 		<div class="flex flex-wrap gap-4">
-			<Chip color="#ff3b00" own>Anna (own)</Chip>
-			<Chip color="#0057ff">Ben</Chip>
-			<Chip color="#00b84a">Cem</Chip>
-			<Chip color="#ffd600">Dana</Chip>
-			<Chip color="#a100ff">Eli</Chip>
+			<Chip color="#ff3b00">Anna (own)</Chip>
+			<Chip color="#0057ff" person>Ben</Chip>
+			<Chip color="#00b84a" person>Cem</Chip>
+			<Chip color="#ffd600" person>Dana</Chip>
+			<Chip color="#a100ff" person note>Eli</Chip>
 		</div>
 	</section>
 
@@ -147,10 +147,10 @@
 		<div class="flex flex-wrap items-start gap-8">
 			<div class="space-y-3">
 				<Bubble>Working from the cafe until noon</Bubble>
-				<Chip color="#0057ff">Ben</Chip>
+				<Chip color="#0057ff" person>Ben</Chip>
 			</div>
 			<div class="space-y-3">
-				<Chip color="#00b84a">Cem</Chip>
+				<Chip color="#00b84a" person>Cem</Chip>
 				<Bubble tail="up">Late, train delay</Bubble>
 			</div>
 		</div>

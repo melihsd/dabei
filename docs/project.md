@@ -39,7 +39,9 @@ Why Drizzle instead of Prisma: lighter, no query engine binary or native addon i
 - One card per configured workday, side by side, stacked on mobile
 - Card shows weekday + date; in slot mode, slots are rows inside the card
 - Present people appear as colored name chips
-- Own chip highlighted, others slightly dimmed
+- All chips in full color; other people's chips carry a person icon
+- Today's card is inverted
+- Past days are dimmed and locked: no toggling, no note editing (enforced on the server too)
 - Click/tap on day (or slot) = toggle own presence
 - Subtle appear/disappear animation
 - Tabs: "This week" / "Next week" – from Sunday on, next week is the default
@@ -47,7 +49,7 @@ Why Drizzle instead of Prisma: lighter, no query engine binary or native addon i
 ### Comments
 
 - Each presence entry can have one optional note, max 140 chars
-- Shown as a chat bubble popup when hovering (or tapping) the person's chip; chips with a note carry a small marker
+- Shown as a chat bubble popup when hovering (or tapping) the person's chip; chips with a note carry a chat icon
 - Click your own chip to edit it
 - Above the note field: emojis (🐶 🍺 ⏰ 🎂). Picking any emoji replaces the note (an entry has emojis or a note, never both); emojis show on the chip
 - Only the owner can add/edit/delete their note
@@ -137,7 +139,7 @@ export const presence = sqliteTable(
 - `--radius: 0` everywhere. No `rounded-*`
 - Borders: 1px solid, black (white in dark mode)
 - Shadows: only hard offset shadows, never blurred, and only where needed (popovers)
-- Week view: day cards joined into one bordered grid. In slot mode each slot is a clickable box (+ on hover, black when you are in). Flat compact chips (no tilt, no shadow), own day inverted
+- Week view: day cards joined into one bordered grid. In slot mode each slot is a clickable box (+ / − on hover). Flat compact chips (no tilt, no shadow), today inverted, past days dimmed
 - Color only as accent: each member's chip color is the main exception
 - No pastels – saturated colors only
 - Typography: monospace or grotesque, no serif (Geist Mono everywhere, like office-zeit)

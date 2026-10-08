@@ -60,8 +60,8 @@
 	}
 </script>
 
-{#snippet chips(date: string, slot: string)}
-	<div class="pointer-events-none relative flex flex-wrap gap-2">
+{#snippet chips(date: string, slot: string, past: boolean)}
+	<div class={cn('pointer-events-none relative flex flex-wrap gap-2', past && 'opacity-40')}>
 		{#each entries(date, slot) as entry (entry.memberId)}
 			{@const noteKey = `${date}|${slot}|${entry.memberId}`}
 			<span out:scale={{ duration: 120, start: 0.8 }} class="group pointer-events-auto relative">
@@ -75,7 +75,7 @@
 						{entry.comment}
 					</Bubble>
 				{/if}
-				{#if entry.memberId === me.id}
+				{#if entry.memberId === me.id && !past}
 					<CommentEditor
 						{date}
 						{slot}
@@ -93,17 +93,17 @@
 						onclick={() => (shownNote = shownNote === noteKey ? null : noteKey)}
 						onblur={() => (shownNote = null)}
 					>
-						<Chip color={entry.color} note>{label(entry)}</Chip>
+						<Chip color={entry.color} person={entry.memberId !== me.id} note>{label(entry)}</Chip>
 					</button>
 				{:else}
-					<Chip color={entry.color}>{label(entry)}</Chip>
+					<Chip color={entry.color} person={entry.memberId !== me.id}>{label(entry)}</Chip>
 				{/if}
 			</span>
 		{/each}
 	</div>
 {/snippet}
 
-{#snippet overlay(date: string, slot: string, label: string, mine: boolean)}
+{#snippet overlay(date: string, slot: string, label: string, mine: boolean, inverted: boolean)}
 	<form method="POST" action="?/toggle" use:enhance={() => submit(date, slot)}>
 		<input type="hidden" name="date" value={date} />
 		<input type="hidden" name="slot" value={slot} />
@@ -113,14 +113,14 @@
 			aria-label={label}
 			class={cn(
 				'group absolute inset-0 cursor-pointer motion-safe:transition-colors motion-safe:duration-100',
-				mine ? 'hover:bg-background/10' : 'hover:bg-foreground/5'
+				inverted ? 'hover:bg-background/10' : 'hover:bg-foreground/5'
 			)}
 		>
 			<span
 				aria-hidden="true"
 				class={cn(
 					'absolute top-2 right-3 text-xl leading-none font-bold opacity-0 group-hover:opacity-100 motion-safe:transition-opacity motion-safe:duration-100',
-					mine ? 'text-background/60' : 'text-foreground/40'
+					inverted ? 'text-background/60' : 'text-foreground/40'
 				)}
 			>
 				{mine ? '−' : '+'}
@@ -133,43 +133,53 @@
 	class="flex flex-col gap-px overflow-x-auto border border-foreground bg-foreground sm:flex-row"
 >
 	{#each days as day (day.iso)}
-		{#if mode === 'day'}
-			{@const mine = isMine(day.iso, '')}
-			<div
-				class={cn(
-					'relative flex min-h-40 min-w-36 flex-1 flex-col gap-3 p-4',
-					mine ? 'bg-foreground text-background' : 'bg-background'
+		<!-- Today is inverted; past days are dimmed and can no longer be changed. -->
+		<div
+			class={cn(
+				'relative flex min-h-40 min-w-36 flex-1 flex-col p-4',
+				mode === 'day' ? 'gap-3' : 'gap-4',
+				day.today ? 'bg-foreground text-background' : 'bg-background'
+			)}
+			aria-disabled={day.past || undefined}
+		>
+			{#if mode === 'day' && !day.past}
+				{@render overlay(
+					day.iso,
+					'',
+					`${day.label} ${day.dateLabel}`,
+					isMine(day.iso, ''),
+					day.today
 				)}
-			>
-				{@render overlay(day.iso, '', `${day.label} ${day.dateLabel}`, mine)}
-				<div class="pointer-events-none relative">
-					<div class="text-2xl leading-none font-bold">{day.label}</div>
-					<div class={cn('mt-1 text-xs', mine ? 'text-background/60' : 'text-muted-foreground')}>
-						{day.dateLabel}
-					</div>
+			{/if}
+			<div class={cn('pointer-events-none relative', day.past && 'opacity-40')}>
+				<div class="text-2xl leading-none font-bold">{day.label}</div>
+				<div class={cn('mt-1 text-xs', day.today ? 'text-background/60' : 'text-muted-foreground')}>
+					{day.dateLabel}
 				</div>
-				<div class="mt-auto">{@render chips(day.iso, '')}</div>
 			</div>
-		{:else}
-			<div class="flex min-h-40 min-w-36 flex-1 flex-col gap-4 bg-background p-4">
-				<div>
-					<div class="text-2xl leading-none font-bold">{day.label}</div>
-					<div class="mt-1 text-xs text-muted-foreground">{day.dateLabel}</div>
-				</div>
+			{#if mode === 'day'}
+				<div class="mt-auto">{@render chips(day.iso, '', day.past)}</div>
+			{:else}
 				{#each slots as slot (slot)}
-					{@const mine = isMine(day.iso, slot)}
-					<div
-						class={cn(
-							'relative flex min-h-24 flex-col gap-3 p-3',
-							mine ? 'bg-foreground text-background' : 'bg-background'
-						)}
-					>
-						{@render overlay(day.iso, slot, `${day.label} ${slot}`, mine)}
-						<div class="pointer-events-none relative text-xs font-bold">{slot}</div>
-						<div class="mt-auto">{@render chips(day.iso, slot)}</div>
+					<div class="relative flex min-h-24 flex-col gap-3 p-3">
+						{#if !day.past}
+							{@render overlay(
+								day.iso,
+								slot,
+								`${day.label} ${slot}`,
+								isMine(day.iso, slot),
+								day.today
+							)}
+						{/if}
+						<div
+							class={cn('pointer-events-none relative text-xs font-bold', day.past && 'opacity-40')}
+						>
+							{slot}
+						</div>
+						<div class="mt-auto">{@render chips(day.iso, slot, day.past)}</div>
 					</div>
 				{/each}
-			</div>
-		{/if}
+			{/if}
+		</div>
 	{/each}
 </div>
