@@ -20,7 +20,7 @@
 		mode: 'day' | 'slots';
 		slots: string[];
 		days: WeekDay[];
-		presence: (Entry & { date: string; slot: string })[];
+		presence: (Entry & { date: string; slot: number })[];
 	};
 
 	let { me, mode, slots, days, presence }: Props = $props();
@@ -31,7 +31,7 @@
 	/** Note currently shown by a tap (touch screens have no hover). */
 	let shownNote = $state<string | null>(null);
 
-	function entries(date: string, slot: string): Entry[] {
+	function entries(date: string, slot: number): Entry[] {
 		const rows = presence.filter((p) => p.date === date && p.slot === slot);
 		const want = pending[`${date}|${slot}`];
 		if (want === undefined) return rows;
@@ -46,11 +46,11 @@
 	/** Name followed by the entry's emojis. */
 	const label = (entry: Entry) => [entry.name, ...emojiList(entry.emojis)].join(' ');
 
-	function isMine(date: string, slot: string) {
+	function isMine(date: string, slot: number) {
 		return entries(date, slot).some((e) => e.memberId === me.id);
 	}
 
-	function submit(date: string, slot: string) {
+	function submit(date: string, slot: number) {
 		const key = `${date}|${slot}`;
 		pending[key] = !isMine(date, slot);
 		return async ({ update }: { update: (o?: { reset?: boolean }) => Promise<void> }) => {
@@ -60,7 +60,7 @@
 	}
 </script>
 
-{#snippet chips(date: string, slot: string, past: boolean)}
+{#snippet chips(date: string, slot: number, past: boolean)}
 	<div class={cn('pointer-events-none relative flex flex-wrap gap-2', past && 'opacity-40')}>
 		{#each entries(date, slot) as entry (entry.memberId)}
 			{@const noteKey = `${date}|${slot}|${entry.memberId}`}
@@ -103,7 +103,7 @@
 	</div>
 {/snippet}
 
-{#snippet overlay(date: string, slot: string, label: string, mine: boolean, inverted: boolean)}
+{#snippet overlay(date: string, slot: number, label: string, mine: boolean, inverted: boolean)}
 	<form method="POST" action="?/toggle" use:enhance={() => submit(date, slot)}>
 		<input type="hidden" name="date" value={date} />
 		<input type="hidden" name="slot" value={slot} />
@@ -145,9 +145,9 @@
 			{#if mode === 'day' && !day.past}
 				{@render overlay(
 					day.iso,
-					'',
+					1,
 					`${day.label} ${day.dateLabel}`,
-					isMine(day.iso, ''),
+					isMine(day.iso, 1),
 					day.today
 				)}
 			{/if}
@@ -158,16 +158,17 @@
 				</div>
 			</div>
 			{#if mode === 'day'}
-				<div class="mt-auto">{@render chips(day.iso, '', day.past)}</div>
+				<div class="mt-auto">{@render chips(day.iso, 1, day.past)}</div>
 			{:else}
-				{#each slots as slot (slot)}
+				<!-- Entries belong to a slot position, so editing the times keeps them. -->
+				{#each slots as slot, i (i)}
 					<div class="relative flex min-h-24 flex-col gap-3 p-3">
 						{#if !day.past}
 							{@render overlay(
 								day.iso,
-								slot,
+								i + 1,
 								`${day.label} ${slot}`,
-								isMine(day.iso, slot),
+								isMine(day.iso, i + 1),
 								day.today
 							)}
 						{/if}
@@ -176,7 +177,7 @@
 						>
 							{slot}
 						</div>
-						<div class="mt-auto">{@render chips(day.iso, slot, day.past)}</div>
+						<div class="mt-auto">{@render chips(day.iso, i + 1, day.past)}</div>
 					</div>
 				{/each}
 			{/if}

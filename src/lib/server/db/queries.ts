@@ -44,7 +44,7 @@ export function getPresenceBetween(from: string, to: string) {
 }
 
 /** Adds the presence entry, or removes it if it already exists. */
-export function togglePresence(memberId: number, date: string, slot: string) {
+export function togglePresence(memberId: number, date: string, slot: number) {
 	const existing = db
 		.select({ id: presence.id })
 		.from(presence)
@@ -61,7 +61,7 @@ export function togglePresence(memberId: number, date: string, slot: string) {
 export function setNote(
 	memberId: number,
 	date: string,
-	slot: string,
+	slot: number,
 	note: { comment: string | null; emojis: string[] }
 ) {
 	const updated = db

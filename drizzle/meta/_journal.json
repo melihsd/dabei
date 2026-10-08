@@ -29,6 +29,13 @@
       "when": 1791018228188,
       "tag": "0003_smart_maggott",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1791477716138,
+      "tag": "0004_nappy_sunfire",
+      "breakpoints": true
     }
   ]
 }

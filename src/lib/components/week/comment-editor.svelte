@@ -9,7 +9,7 @@
 
 	type Props = {
 		date: string;
-		slot: string;
+		slot: number;
 		name: string;
 		color: string;
 		comment: string | null;

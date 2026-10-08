@@ -167,10 +167,11 @@ export const actions: Actions = {
 
 function readTarget(data: FormData, settings: Settings) {
 	const date = String(data.get('date') ?? '');
-	const slot = String(data.get('slot') ?? '');
+	const slot = Number(data.get('slot'));
 
-	const validSlot =
-		settings.mode === 'day' ? slot === '' : parseSlots(settings.slots).includes(slot);
+	// Slot is the 1-based position; day mode always uses 1.
+	const slotCount = settings.mode === 'day' ? 1 : parseSlots(settings.slots).length;
+	const validSlot = Number.isInteger(slot) && slot >= 1 && slot <= slotCount;
 	if (!validSlot || !isBookableDate(date, new Date(), parseWorkdays(settings.workdays)))
 		return null;
 	return { date, slot };

@@ -114,7 +114,7 @@ export const presence = sqliteTable(
 			.notNull()
 			.references(() => members.id, { onDelete: 'cascade' }),
 		date: text('date').notNull(), // ISO "2026-10-05"
-		slot: text('slot').notNull().default(''), // '' in day mode, "09:00-13:00" in slot mode
+		slot: integer('slot').notNull().default(1), // 1-based slot position; always 1 in day mode
 		comment: text('comment'), // optional, max 140 chars
 		createdAt: integer('created_at', { mode: 'timestamp' })
 			.notNull()
@@ -127,7 +127,7 @@ export const presence = sqliteTable(
 );
 ```
 
-`slot` is `''` instead of `NULL` in day mode on purpose: SQLite treats NULLs as distinct in unique indexes, so `NULL` would allow duplicate day entries.
+`slot` is the slot's position, not its time text, so entries survive settings changes: editing slot times keeps them, day mode shows the entries of slot 1, and removing slots only hides the higher positions until slots are added again. It is `1` instead of `NULL` in day mode because SQLite treats NULLs as distinct in unique indexes.
 
 ---
 
