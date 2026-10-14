@@ -14,7 +14,7 @@ import {
 	memberNameExists,
 	updateSettings
 } from '#lib/server/db/queries.js';
-import { outlineConfigured, outlineRedirectUri } from '#lib/server/outline.js';
+import { outlineConfigured, outlineMembersUrl, outlineRedirectUri } from '#lib/server/outline.js';
 import { WEEKDAYS } from '#lib/dates.js';
 import { MAX_NAME_LENGTH, MEMBER_COLORS } from '#lib/constants.js';
 import { isValidSlot, isWeekday, parseMemberName } from '#lib/settings.js';
@@ -31,7 +31,11 @@ export const load: PageServerLoad = (event) => {
 		admin: true as const,
 		sso: event.locals.authRequired,
 		settings: getSettings(),
-		outline: { configured: outlineConfigured(), redirectUri: outlineRedirectUri ?? null },
+		outline: {
+			configured: outlineConfigured(),
+			redirectUri: outlineRedirectUri ?? null,
+			membersUrl: outlineConfigured() ? outlineMembersUrl() : null
+		},
 		members: getAllMembers()
 	};
 };

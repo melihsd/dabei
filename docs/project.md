@@ -75,7 +75,7 @@ Why Drizzle instead of Prisma: lighter, no query engine binary or native addon i
 - Turns on automatically once the `OUTLINE_URL`, `OAUTH_CLIENT_ID`, `OAUTH_CLIENT_SECRET` and `OAUTH_REDIRECT_URI` env vars are set; stays off otherwise. No toggle
 - Direct OAuth with Outline (authorize, token, `users.info`). No other service involved
 - While on: the name picker and self-registration are disabled, people sign in with Outline. First login links the Outline user to an existing name with the same spelling, or creates a member from their Outline name (they pick their own color). Identity is a signed cookie (`COOKIE_SECRET`). The name is re-synced from Outline on every login; to change it, the header links to the Outline profile (`/settings`)
-- The Settings link is only shown to admins. With Outline login on, `/settings` is open only to Outline admins (role read from `users.info` on every login, stored as `members.outline_admin`); there is no password field. Without it, `/settings` needs `ADMIN_PASSWORD`; if none is set, nobody gets in and non-admins are silently redirected home
+- The Settings link is only shown to admins. With Outline login on, `/settings` is open only to Outline admins (role read from `users.info` on every login, stored as `members.outline_admin`); there is no password field. Below the team names in settings, an "Edit users in Outline" button opens Outline's member settings (`/settings/members`). Without it, `/settings` needs `ADMIN_PASSWORD`; if none is set, nobody gets in and non-admins are silently redirected home
 
 ### Live updates
 

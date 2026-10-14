@@ -7,6 +7,7 @@
 	import { Textarea } from '#lib/components/ui/textarea/index.js';
 	import { WEEKDAYS, parseSlots, parseWorkdays } from '#lib/dates.js';
 	import { MAX_NAME_LENGTH } from '#lib/constants.js';
+	import ExternalLinkIcon from '~icons/line-md/external-link';
 
 	let { data, form } = $props();
 
@@ -163,6 +164,18 @@
 					<li class="p-3 text-sm text-muted-foreground">No names yet.</li>
 				{/each}
 			</ul>
+			{#if data.outline.membersUrl}
+				<Button
+					href={data.outline.membersUrl}
+					target="_blank"
+					rel="noopener noreferrer"
+					variant="outline"
+					size="sm"
+				>
+					Edit users in Outline
+					<ExternalLinkIcon aria-hidden="true" />
+				</Button>
+			{/if}
 		</section>
 
 		{#if !data.outline.configured}
