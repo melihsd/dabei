@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { ColorPicker } from '#lib/components/ui/color-picker/index.js';
 	import { Input } from '#lib/components/ui/input/index.js';
+	import { Select } from '#lib/components/ui/select/index.js';
 	import { Switch } from '#lib/components/ui/switch/index.js';
 	import { Popover, PopoverContent, PopoverTrigger } from '#lib/components/ui/popover/index.js';
 	import { Textarea } from '#lib/components/ui/textarea/index.js';
@@ -116,9 +117,18 @@
 	</section>
 
 	<section class="space-y-4">
-		<h2 class="text-2xl font-bold">Input, Switch, ColorPicker</h2>
+		<h2 class="text-2xl font-bold">Input, Select, Switch, ColorPicker</h2>
 		<div class="max-w-sm space-y-4">
 			<Input placeholder="Name" />
+			<Select
+				aria-label="Group"
+				items={[
+					{ value: 'all', label: 'All Outline users' },
+					{ value: 'office', label: 'Office' },
+					{ value: 'remote', label: 'Remote team' }
+				]}
+			/>
+			<Select aria-label="Disabled" items={[]} disabled />
 			<div class="flex items-center gap-3">
 				<Switch bind:checked={on} aria-label="Active" />
 				<span class="font-mono text-sm">{on ? 'active' : 'inactive'}</span>
