@@ -2,6 +2,7 @@ import { and, asc, desc, eq, gte, lte } from 'drizzle-orm';
 import { MAX_NAME_LENGTH, MEMBER_COLORS } from '#lib/constants.js';
 import { db } from './index';
 import { members, presence, settings } from './schema';
+import type { OutlineGroup } from '#lib/server/outline.js';
 
 export function getSettings() {
 	return db.select().from(settings).where(eq(settings.id, 1)).get();
@@ -113,6 +114,27 @@ export function deleteMember(id: number) {
 
 export function updateSettings(values: { mode: 'day' | 'slots'; slots: string; workdays: string }) {
 	db.update(settings).set(values).where(eq(settings.id, 1)).run();
+}
+
+/** The Outline group whose members may sign in; null means everyone. */
+export function setAllowedGroup(groupId: string | null) {
+	db.update(settings).set({ allowedGroup: groupId }).where(eq(settings.id, 1)).run();
+}
+
+export function getOutlineGroups(): OutlineGroup[] {
+	try {
+		return JSON.parse(getSettings()?.outlineGroups ?? '[]');
+	} catch {
+		return [];
+	}
+}
+
+export function saveOutlineGroups(groups: OutlineGroup[]) {
+	const sorted = groups.toSorted((a, b) => a.name.localeCompare(b.name));
+	db.update(settings)
+		.set({ outlineGroups: JSON.stringify(sorted) })
+		.where(eq(settings.id, 1))
+		.run();
 }
 
 /**

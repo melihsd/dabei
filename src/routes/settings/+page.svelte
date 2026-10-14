@@ -3,6 +3,7 @@
 	import { resolve } from '$app/paths';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import { Input } from '#lib/components/ui/input/index.js';
+	import { Select } from '#lib/components/ui/select/index.js';
 	import { Switch } from '#lib/components/ui/switch/index.js';
 	import { Textarea } from '#lib/components/ui/textarea/index.js';
 	import { WEEKDAYS, parseSlots, parseWorkdays } from '#lib/dates.js';
@@ -12,6 +13,21 @@
 	let { data, form } = $props();
 
 	let mode = $derived(data.settings?.mode);
+
+	let allowedGroup = $derived(data.settings?.allowedGroup ?? 'all');
+	let groupItems = $derived.by(() => {
+		const groups = data.outline?.groups ?? [];
+		const items = [
+			{ value: 'all', label: 'All Outline users' },
+			...groups.map((g) => ({ value: g.id, label: g.name }))
+		];
+		// The chosen group may have been deleted in Outline since the list was last read.
+		const saved = data.settings?.allowedGroup;
+		if (saved && !groups.some((g) => g.id === saved)) {
+			items.push({ value: saved, label: 'Unknown group' });
+		}
+		return items;
+	});
 
 	const chipLabel =
 		'flex min-h-11 cursor-pointer items-center border border-foreground px-4 font-mono text-sm font-bold uppercase has-checked:bg-foreground has-checked:text-background has-focus-visible:outline-2 has-focus-visible:outline-offset-2';
@@ -107,35 +123,85 @@
 
 		<section class="space-y-4">
 			<h2 class="text-2xl font-bold">Login</h2>
-			<div class="max-w-xl space-y-4">
-				<p class="text-sm">
-					Login via Outline:
-					<strong class={data.outline.configured ? '' : 'text-muted-foreground'}>
-						{data.outline.configured ? 'on' : 'off'}
-					</strong>
-				</p>
-				<p class="text-sm text-muted-foreground">
-					Turns on automatically once OUTLINE_URL, OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET and
-					OAUTH_REDIRECT_URI are set. People then sign in with Outline instead of picking a name;
-					their Outline name becomes their dabei name (an existing name with the same spelling is
-					linked on first login). While it is on, only Outline admins can open this page; the admin
-					password is not used.
-				</p>
-				{#if data.outline.redirectUri}
-					<p class="text-sm">
-						<span class="text-muted-foreground">Redirect URI to register in Outline:</span><br />
-						<code class="break-all">{data.outline.redirectUri}</code>
+			<p class="text-sm">
+				Login via Outline:
+				<strong class={data.outline.configured ? '' : 'text-muted-foreground'}>
+					{data.outline.configured ? 'on' : 'off'}
+				</strong>
+			</p>
+			<details class="max-w-xl text-sm text-muted-foreground">
+				<summary class="cursor-pointer font-mono font-bold text-foreground uppercase">
+					Setup and details
+				</summary>
+				<div class="mt-2 space-y-2">
+					<p>
+						Turns on automatically once OUTLINE_URL, OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET and
+						OAUTH_REDIRECT_URI are set. People then sign in with Outline instead of picking a name;
+						their Outline name becomes their dabei name (an existing name with the same spelling is
+						linked on first login). While it is on, only Outline admins can open this page; the
+						admin password is not used.
 					</p>
-				{/if}
-			</div>
+					{#if data.outline.redirectUri}
+						<p>
+							Redirect URI to register in Outline:<br />
+							<code class="break-all text-foreground">{data.outline.redirectUri}</code>
+						</p>
+					{/if}
+				</div>
+			</details>
+
+			{#if data.outline.configured}
+				<form
+					method="POST"
+					action="?/saveLogin"
+					use:enhance={() =>
+						({ update }) =>
+							update({ reset: false })}
+					class="max-w-xl space-y-2"
+				>
+					<span id="allowed-group-label" class="block font-mono text-sm font-bold uppercase">
+						Restrict login to group
+					</span>
+					<div class="flex gap-2">
+						<Select
+							name="allowedGroup"
+							items={groupItems}
+							bind:value={allowedGroup}
+							aria-labelledby="allowed-group-label"
+							class="max-w-sm"
+						/>
+						<Button type="submit">Save</Button>
+					</div>
+					{#if form?.scope === 'login-group'}
+						{#if 'error' in form}
+							<p class="font-bold text-destructive">{form.error}</p>
+						{:else}
+							<p class="font-mono text-sm font-bold">Saved.</p>
+						{/if}
+					{/if}
+					<!-- A quick Outline sign-in reads the groups and returns here. -->
+					<a
+						href="/auth/login?next=settings"
+						data-sveltekit-reload
+						class="inline-block font-mono text-sm font-bold uppercase underline underline-offset-4"
+					>
+						Reload groups
+					</a>
+					<p class="text-sm text-muted-foreground">
+						Outline admins can always sign in. Group membership is checked at sign-in, so to lock
+						someone out right away, also remove them under Team names. Groups are read from Outline
+						whenever an admin signs in.
+					</p>
+				</form>
+			{/if}
 		</section>
 
 		<section class="space-y-4">
 			<h2 class="text-2xl font-bold">Team names</h2>
 			<p class="text-sm text-muted-foreground">
 				{#if data.outline.configured}
-					Names are created automatically when people sign in with Outline. You can remove people
-					here.
+					Names are created automatically when people sign in with Outline. Removing someone here
+					signs them out right away.
 				{:else}
 					People pick their name on their first visit and choose their own color. They can also add
 					themselves.

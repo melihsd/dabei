@@ -11,7 +11,9 @@ import {
 	getAllMembers,
 	getSettings,
 	deleteMember,
+	getOutlineGroups,
 	memberNameExists,
+	setAllowedGroup,
 	updateSettings
 } from '#lib/server/db/queries.js';
 import { outlineConfigured, outlineMembersUrl, outlineRedirectUri } from '#lib/server/outline.js';
@@ -34,7 +36,8 @@ export const load: PageServerLoad = (event) => {
 		outline: {
 			configured: outlineConfigured(),
 			redirectUri: outlineRedirectUri ?? null,
-			membersUrl: outlineConfigured() ? outlineMembersUrl() : null
+			membersUrl: outlineConfigured() ? outlineMembersUrl() : null,
+			groups: getOutlineGroups()
 		},
 		members: getAllMembers()
 	};
@@ -91,6 +94,17 @@ export const actions: Actions = {
 			workdays: WEEKDAYS.filter((w) => workdays.includes(w)).join(',')
 		});
 		return { scope: 'settings', saved: true };
+	},
+
+	saveLogin: async (event) => {
+		if (!canAdmin(event)) return fail(401, { scope: 'login-group', error: 'Not signed in.' });
+
+		const group = String((await event.request.formData()).get('allowedGroup') ?? 'all');
+		if (group !== 'all' && !getOutlineGroups().some((g) => g.id === group)) {
+			return fail(400, { scope: 'login-group', error: 'Unknown group.' });
+		}
+		setAllowedGroup(group === 'all' ? null : group);
+		return { scope: 'login-group', saved: true };
 	},
 
 	addMember: async (event) => {

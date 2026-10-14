@@ -16,7 +16,9 @@ export const settings = sqliteTable('settings', {
 		.notNull()
 		.default('day'),
 	slots: text('slots').notNull().default('09:00-13:00,13:00-18:00'),
-	workdays: text('workdays').notNull().default('mon,tue,wed,thu,fri')
+	workdays: text('workdays').notNull().default('mon,tue,wed,thu,fri'),
+	allowedGroup: text('allowed_group'), // Outline group id; null = all Outline users
+	outlineGroups: text('outline_groups').notNull().default('[]') // JSON [{ id, name }], refreshed on admin login
 });
 
 export const presence = sqliteTable(

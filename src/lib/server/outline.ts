@@ -6,6 +6,7 @@ import {
 } from '$app/env/private';
 
 export type OutlineUser = { id: string; name: string; email: string; isAdmin: boolean };
+export type OutlineGroup = { id: string; name: string };
 
 export function outlineConfigured() {
 	return Boolean(OUTLINE_URL && OAUTH_CLIENT_ID && OAUTH_CLIENT_SECRET && OAUTH_REDIRECT_URI);
@@ -49,23 +50,45 @@ async function exchangeCode(code: string): Promise<string> {
 	return data.access_token;
 }
 
-/** Trades the authorization code for the signed-in Outline user. */
-export async function fetchOutlineUser(code: string): Promise<OutlineUser> {
-	const token = await exchangeCode(code);
-	const res = await fetch(`${base()}/api/users.info`, {
+async function api(token: string, method: string, body: object) {
+	const res = await fetch(`${base()}/api/${method}`, {
 		method: 'POST',
 		headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-		body: '{}'
+		body: JSON.stringify(body)
 	});
-	if (!res.ok) throw new Error(`Outline user lookup failed (${res.status})`);
+	if (!res.ok) throw new Error(`Outline ${method} failed (${res.status})`);
+	return (await res.json()).data;
+}
 
-	const body = await res.json();
-	const user = body.data ?? body;
+/** Trades the authorization code for the signed-in Outline user and a token for further lookups. */
+export async function fetchOutlineUser(
+	code: string
+): Promise<{ user: OutlineUser; token: string }> {
+	const token = await exchangeCode(code);
+	const user = await api(token, 'users.info', {});
 	if (!user?.id || !user?.name) throw new Error('Outline returned no user');
 	return {
-		id: String(user.id),
-		name: String(user.name),
-		email: String(user.email ?? ''),
-		isAdmin: user.role === 'admin' || user.isAdmin === true
+		token,
+		user: {
+			id: String(user.id),
+			name: String(user.name),
+			email: String(user.email ?? ''),
+			isAdmin: user.role === 'admin' || user.isAdmin === true
+		}
 	};
+}
+
+/** All groups of the Outline team, or only those the given user is in. */
+export async function fetchOutlineGroups(token: string, userId?: string): Promise<OutlineGroup[]> {
+	const groups: OutlineGroup[] = [];
+	const limit = 100;
+	for (let offset = 0; ; offset += limit) {
+		const data = await api(token, 'groups.list', { userId, limit, offset });
+		// Newer Outline versions wrap the list in `groups`, older ones return it directly.
+		const page: { id: unknown; name: unknown }[] = Array.isArray(data)
+			? data
+			: (data?.groups ?? []);
+		groups.push(...page.map((g) => ({ id: String(g.id), name: String(g.name) })));
+		if (page.length < limit) return groups;
+	}
 }

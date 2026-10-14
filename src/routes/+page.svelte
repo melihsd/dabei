@@ -36,6 +36,10 @@
 			{:else}
 				{#if data.loginFailed}
 					<p class="font-bold text-destructive">Login failed. Please try again.</p>
+				{:else if data.loginDenied}
+					<p class="font-bold text-destructive">
+						Your Outline account is not in the group that can use dabei. Ask an admin.
+					</p>
 				{/if}
 				<Button href="/auth/login" data-sveltekit-reload>Sign in with Outline</Button>
 			{/if}

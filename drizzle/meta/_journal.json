@@ -36,6 +36,13 @@
       "when": 1791477716138,
       "tag": "0004_nappy_sunfire",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1791977486290,
+      "tag": "0005_flowery_riptide",
+      "breakpoints": true
     }
   ]
 }

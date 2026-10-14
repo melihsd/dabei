@@ -36,7 +36,8 @@ export const load: PageServerLoad = ({ locals, url, cookies }) => {
 			members: locals.authRequired ? [] : getActiveMembers(),
 			authRequired: locals.authRequired,
 			loginConfigured: outlineConfigured(),
-			loginFailed: url.searchParams.get('login') === 'failed'
+			loginFailed: url.searchParams.get('login') === 'failed',
+			loginDenied: url.searchParams.get('login') === 'denied'
 		};
 	}
 
