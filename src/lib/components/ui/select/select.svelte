@@ -31,7 +31,7 @@
 <SelectPrimitive.Root type="single" bind:value {items} {name} {disabled}>
 	<SelectPrimitive.Trigger
 		class={cn(
-			'flex min-h-11 w-full cursor-pointer items-center justify-between gap-3 border border-foreground bg-background px-3 text-left text-sm focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-40 data-[state=open]:bg-foreground data-[state=open]:text-background',
+			'flex min-h-11 w-full cursor-pointer items-center justify-between gap-3 border border-foreground bg-background px-3 text-left text-sm focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-40',
 			className
 		)}
 		{...rest}
@@ -49,7 +49,7 @@
 					<SelectPrimitive.Item
 						value={item.value}
 						label={item.label}
-						class="flex min-h-11 cursor-pointer items-center justify-between gap-3 px-3 text-sm data-highlighted:bg-foreground data-highlighted:text-background"
+						class="flex min-h-11 cursor-pointer items-center justify-between gap-3 px-3 text-sm data-highlighted:underline data-highlighted:underline-offset-4"
 					>
 						{#snippet children({ selected })}
 							<span class="truncate">{item.label}</span>
