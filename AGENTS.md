@@ -44,6 +44,12 @@ chore: configure drizzle with sqlite
 
 ---
 
+## Branching
+
+Trunk-based. `main` is locked: no direct pushes, for anyone. Work on a short-lived branch (`feat/...`, `fix/...`, `chore/...`), open a PR, wait for the `image` check, squash-merge. The PR title becomes the commit message, so it follows Conventional Commits. Dependabot and CodeQL run on GitHub.
+
+---
+
 ## Rules
 
 - Svelte 5 runes only (`$state`, `$derived`, `$props`, `$effect`) – no legacy `export let` / `$:`.
