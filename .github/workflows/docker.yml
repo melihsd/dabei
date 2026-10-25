@@ -32,7 +32,7 @@ jobs:
             build=false
             while read -r file; do
               case "$file" in
-                *.md | docs/* | .agents/* | .vscode/* | LICENSE | .github/dependabot.yml | .github/workflows/codeql.yml) ;;
+                *.md | docs/* | .agents/* | .vscode/* | LICENSE | .github/dependabot.yml) ;;
                 *) build=true ;;
               esac
             done < <(git diff --name-only "$BASE" "$HEAD")
