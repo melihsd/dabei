@@ -28,7 +28,6 @@ Bun · SvelteKit (Svelte 5) · Shadcn-Svelte · SQLite (`bun:sqlite`) with Drizz
 
 ```sh
 export ADMIN_PASSWORD=change-me
-export COOKIE_SECRET=$(openssl rand -hex 32)
 docker compose pull && docker compose up -d     # http://localhost:3000
 ```
 
@@ -42,7 +41,6 @@ Copy `.env.example` to `.env` and fill it in. `.env` is never committed.
 | --------------------- | -------- | -------------------------------------------------------------------------------------------------- |
 | `DATABASE_URL`        | no       | Path to the SQLite file, e.g. `./data/dabei.db`                                                    |
 | `ADMIN_PASSWORD`      | no       | Password for `/settings`. If empty, password login is disabled                                     |
-| `COOKIE_SECRET`       | no       | Signs admin and login cookies. If empty, a temporary one is generated per start and logged         |
 | `OUTLINE_URL`         | no       | Base URL of your Outline instance. Outline login is on once all four `OUTLINE_*`/`OAUTH_*` are set |
 | `OAUTH_CLIENT_ID`     | no       | Outline OAuth client ID                                                                            |
 | `OAUTH_CLIENT_SECRET` | no       | Outline OAuth client secret                                                                        |
@@ -95,7 +93,7 @@ Or build the image yourself and run it:
 ```sh
 docker build -t dabei .
 docker run -d --name dabei -p 3000:3000 \
-  -e ADMIN_PASSWORD=change-me -e COOKIE_SECRET=$(openssl rand -hex 32) \
+  -e ADMIN_PASSWORD=change-me \
   -v dabei-data:/app/data dabei
 ```
 
