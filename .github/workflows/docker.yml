@@ -14,7 +14,7 @@ jobs:
   # Docs and repo config don't change the image. The image job is skipped (which counts as passed
   # for the required check) when only such files changed. Tags always build.
   changes:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     outputs:
       build: ${{ steps.diff.outputs.build }}
     steps:
@@ -42,7 +42,7 @@ jobs:
   image:
     needs: changes
     if: needs.changes.outputs.build == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
