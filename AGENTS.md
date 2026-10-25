@@ -25,10 +25,10 @@ Reusable workflows live in `.agents/skills/` – use them when a task matches.
 
 ## Terminal permissions
 
-| Allowed without asking                | Must be announced                       |
-| ------------------------------------- | --------------------------------------- |
-| `ls`, `grep`, `find`, `cat` – reading | `bun`, `bunx`, `git commit`, `git push` |
-| Exploring the file structure          | Creating or changing files              |
+| Allowed without asking                | Must be announced                                                      |
+| ------------------------------------- | ---------------------------------------------------------------------- |
+| `ls`, `grep`, `find`, `cat` – reading | `bun`, `bunx`, `git commit`, `git push`, `gh pr create`, `gh pr merge` |
+| Exploring the file structure          | Creating or changing files                                             |
 
 ---
 
