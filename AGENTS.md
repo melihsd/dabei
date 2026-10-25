@@ -25,10 +25,10 @@ Reusable workflows live in `.agents/skills/` – use them when a task matches.
 
 ## Terminal permissions
 
-| Allowed without asking                | Must be announced                       |
-| ------------------------------------- | --------------------------------------- |
-| `ls`, `grep`, `find`, `cat` – reading | `bun`, `bunx`, `git commit`, `git push` |
-| Exploring the file structure          | Creating or changing files              |
+| Allowed without asking                | Must be announced                                                      |
+| ------------------------------------- | ---------------------------------------------------------------------- |
+| `ls`, `grep`, `find`, `cat` – reading | `bun`, `bunx`, `git commit`, `git push`, `gh pr create`, `gh pr merge` |
+| Exploring the file structure          | Creating or changing files                                             |
 
 ---
 
@@ -41,6 +41,12 @@ feat: add slot mode to day cards
 fix: comment bubble overflowing on mobile
 chore: configure drizzle with sqlite
 ```
+
+---
+
+## Branching
+
+Trunk-based. `main` is locked: no direct pushes, for anyone. Work on a short-lived branch (`feat/...`, `fix/...`, `chore/...`), open a PR, wait for the `image` check, squash-merge. The PR title becomes the commit message, so it follows Conventional Commits. Dependabot and CodeQL run on GitHub.
 
 ---
 

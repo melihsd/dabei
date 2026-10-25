@@ -170,6 +170,14 @@ COOKIE_SECRET=""   # optional; generated per start if empty
 
 ---
 
+## Workflow and security
+
+- Trunk-based development. The `Protect main` ruleset blocks direct pushes, force-pushes and deletion, needs a PR with a passing `image` build, allows squash merges only and has no bypass. Merged branches are deleted
+- Dependabot (weekly: Bun, GitHub Actions, Docker) and CodeQL open security findings and update PRs
+- CSP, `nosniff`, `Referrer-Policy` and `Permissions-Policy` are set in `vite.config.ts` and `src/hooks.server.ts`
+
+---
+
 ## Open points
 
 - [ ] Domain / subdomain on Hetzner
