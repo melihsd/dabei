@@ -18,7 +18,23 @@ export default defineConfig({
 
 			// Origin checking is done in hooks.server.ts, because the Bun adapter assumes HTTPS
 			// and would reject every form post on plain http.
-			csrf: { trustedOrigins: ['*'] }
+			csrf: { trustedOrigins: ['*'] },
+
+			// Scripts are limited to our own bundle (SvelteKit adds hashes for its inline bootstrap).
+			// Styles allow inline because Svelte transitions and bits-ui set style attributes.
+			csp: {
+				mode: 'auto',
+				directives: {
+					'default-src': ['self'],
+					'script-src': ['self'],
+					'style-src': ['self', 'unsafe-inline'],
+					'img-src': ['self', 'data:'],
+					'object-src': ['none'],
+					'base-uri': ['self'],
+					'form-action': ['self'],
+					'frame-ancestors': ['none']
+				}
+			}
 		}),
 		// scale 1 = 1em, so icons follow the font size.
 		Icons({ compiler: 'svelte', scale: 1 })
