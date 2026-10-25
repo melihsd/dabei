@@ -11,7 +11,37 @@ permissions:
   packages: write
 
 jobs:
+  # Docs and repo config don't change the image. The image job is skipped (which counts as passed
+  # for the required check) when only such files changed. Tags always build.
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      build: ${{ steps.diff.outputs.build }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - id: diff
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD: ${{ github.sha }}
+        run: |
+          build=true
+          if [[ "$GITHUB_REF" != refs/tags/* ]] && git cat-file -e "$BASE^{commit}" 2>/dev/null; then
+            build=false
+            while read -r file; do
+              case "$file" in
+                *.md | docs/* | .agents/* | .vscode/* | LICENSE | .github/dependabot.yml | .github/workflows/codeql.yml) ;;
+                *) build=true ;;
+              esac
+            done < <(git diff --name-only "$BASE" "$HEAD")
+          fi
+          echo "build=$build" >> "$GITHUB_OUTPUT"
+
   image:
+    needs: changes
+    if: needs.changes.outputs.build == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
