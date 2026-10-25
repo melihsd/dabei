@@ -119,7 +119,14 @@
 								Change username
 							</a>
 						{:else}
-							<form method="POST" action="?/rename" use:enhance class="flex gap-2">
+							<form
+								method="POST"
+								action="?/rename"
+								use:enhance={() =>
+									({ update }) =>
+										update({ navigate: false })}
+								class="flex gap-2"
+							>
 								<Input
 									name="name"
 									value={data.member.name}
@@ -135,7 +142,7 @@
 							action="?/color"
 							use:enhance={() =>
 								async ({ update }) => {
-									await update({ reset: false });
+									await update({ reset: false, navigate: false });
 									colorOpen = false;
 								}}
 							onchange={(e) => e.currentTarget.requestSubmit()}

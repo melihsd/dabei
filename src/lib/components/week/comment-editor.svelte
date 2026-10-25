@@ -47,7 +47,7 @@
 						error = String(result.data?.error ?? 'Could not save the note.');
 						return;
 					}
-					await update({ reset: false });
+					await update({ reset: false, navigate: false });
 					open = false;
 				}}
 		>

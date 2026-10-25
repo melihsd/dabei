@@ -53,8 +53,12 @@
 	function submit(date: string, slot: number) {
 		const key = `${date}|${slot}`;
 		pending[key] = !isMine(date, slot);
-		return async ({ update }: { update: (o?: { reset?: boolean }) => Promise<void> }) => {
-			await update({ reset: false });
+		return async ({
+			update
+		}: {
+			update: (o?: { reset?: boolean; navigate?: boolean }) => Promise<void>;
+		}) => {
+			await update({ reset: false, navigate: false });
 			delete pending[key];
 		};
 	}
