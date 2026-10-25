@@ -11,7 +11,8 @@ export const variables = defineEnvVars({
 	},
 	COOKIE_SECRET: {
 		schema: optional,
-		description: 'Secret used to sign the admin and login cookies. Generated per start if empty.'
+		description:
+			'Secret used to sign the admin and login cookies. If empty, a key is generated once and stored next to the SQLite file.'
 	},
 	OUTLINE_URL: {
 		schema: optional,

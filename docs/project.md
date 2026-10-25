@@ -163,7 +163,7 @@ Use bits-ui primitives under the hood where accessibility matters (Dialog, Popov
 ```
 DATABASE_URL="file:./data/dabei.db"
 ADMIN_PASSWORD=""
-COOKIE_SECRET=""   # optional; generated per start if empty
+COOKIE_SECRET=""   # optional; if empty, generated once and stored next to the SQLite file
 ```
 
 `.env` never in git. `.env.example` with empty values.
