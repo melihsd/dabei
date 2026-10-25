@@ -6,7 +6,7 @@ COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
 COPY . .
 # SvelteKit validates env vars at build time; the real values are read at runtime.
-RUN DATABASE_URL=build ADMIN_PASSWORD=build COOKIE_SECRET=build bun run build
+RUN DATABASE_URL=build ADMIN_PASSWORD=build bun run build
 
 FROM oven/bun:1.4.4-alpine AS prod-deps
 WORKDIR /app

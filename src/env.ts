@@ -9,11 +9,6 @@ export const variables = defineEnvVars({
 		schema: optional,
 		description: 'Password for the settings page. Empty disables password login.'
 	},
-	COOKIE_SECRET: {
-		schema: optional,
-		description:
-			'Secret used to sign the admin and login cookies. If empty, a key is generated once and stored next to the SQLite file.'
-	},
 	OUTLINE_URL: {
 		schema: optional,
 		description: 'Base URL of your Outline instance (optional login).'

@@ -25,7 +25,7 @@ export function readMemberId(cookies: Cookies): number | null {
 }
 
 // Signed login session, used when "Require login via Outline" is on.
-// Unlike the plain name cookie above, it cannot be forged without COOKIE_SECRET.
+// Unlike the plain name cookie above, it cannot be forged without the cookie key.
 export const SESSION_COOKIE = 'dabei_session';
 const SESSION_SECONDS = 60 * 60 * 24 * 7;
 
