@@ -41,5 +41,11 @@ export const handle: Handle = ({ event, resolve }) => {
 		? readSessionMemberId(event.cookies)
 		: readMemberId(event.cookies);
 	event.locals.member = (id !== null && getActiveMember(id)) || null;
+
+	event.setHeaders({
+		'x-content-type-options': 'nosniff',
+		'referrer-policy': 'same-origin',
+		'permissions-policy': 'camera=(), microphone=(), geolocation=()'
+	});
 	return resolve(event);
 };
