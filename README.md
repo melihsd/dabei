@@ -1,65 +1,30 @@
 # dabei
 
-> Inspired by [office-zeit](https://github.com/nestoririondo/office-zeit) by Nestor Iriondo. Written from scratch.
-
 **Who's in, and when.**
 
-A small self-hosted planner for teams: everyone marks when they're in – full days or time slots – and can leave a short note on their entry, shown as a chat bubble. One container, one SQLite file, no login.
+A small self-hosted planner for teams. Everyone marks when they're in – full days or time slots – and can leave a short note or an emoji on their entry. One container, one SQLite file, no external services.
 
-<!-- TODO: add a screenshot, e.g. docs/screenshot.png -->
+[![Docker](https://github.com/melihsd/dabei/actions/workflows/docker.yml/badge.svg)](https://github.com/melihsd/dabei/actions/workflows/docker.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-black.svg)](LICENSE)
 
-![Screenshot placeholder](docs/screenshot.png)
+> Inspired by [office-zeit](https://github.com/nestoririondo/office-zeit) by Nestor Iriondo. Written from scratch.
 
 ## Features
 
 - **Two modes:** full days, or time slots such as `09:00-13:00` (a global setting)
-- **Week view:** one card per workday, this week and next week (from Sunday on, next week is the default)
-- **One tap to toggle** your presence, with optimistic updates and a refresh every 30 s
-- **Notes:** one optional note per entry (max 140 characters), shown as a chat bubble on your chip
-- **In-app settings:** mode, slots, workdays and the list of names (add / remove), behind an admin password
-- **No accounts:** pick your name or add yourself, choose your own color, remembered in a cookie
+- **Week view:** one card per workday, this week and next week (from Sunday on, next week is the default). Past days are dimmed and locked
+- **One tap to toggle** your presence, with optimistic updates and a live refresh every 10 s while the tab is visible
+- **Notes and emojis:** one optional note per entry (max 140 characters) shown as a chat bubble, or a quick emoji (🐶 🍺 ⏰ 🎂) on your chip
+- **In-app settings:** mode, slots, workdays and the list of names, behind an admin password
+- **No accounts by default:** pick your name or add yourself, choose your own color, remembered in a cookie
+- **Optional Outline login:** sign in with your [Outline](https://www.getoutline.com) account, optionally restricted to one group
 - **Brutalist design:** black and white, hard edges, light and dark mode
 
 ## Stack
 
 Bun · SvelteKit (Svelte 5) · Tailwind CSS v4 · bits-ui · SQLite (`bun:sqlite`) with Drizzle ORM · Docker Compose
 
-## Environment variables
-
-| Variable         | Description                                                                                                      |
-| ---------------- | ---------------------------------------------------------------------------------------------------------------- |
-| `DATABASE_URL`   | Path to the SQLite file, e.g. `./data/dabei.db`                                                                  |
-| `ADMIN_PASSWORD` | Optional. Password for `/settings`; if empty, password login is disabled                                         |
-| `COOKIE_SECRET`  | Signs admin and login cookies. Optional: if empty, a temporary one is generated per start and printed in the log |
-
-Copy `.env.example` to `.env` and fill it in. `.env` is never committed.
-
-## Login with Outline (optional)
-
-By default there are no accounts: people pick a name. If you run [Outline](https://www.getoutline.com), you can require a login with it instead:
-
-1. In Outline, create an OAuth client (Settings → Applications) with the redirect URI `https://your-dabei-host/auth/callback`.
-2. Set `OUTLINE_URL`, `OAUTH_CLIENT_ID`, `OAUTH_CLIENT_SECRET` and `OAUTH_REDIRECT_URI` (see `.env.example`).
-3. Sign in to `/settings` and switch on **Require login via Outline**.
-
-People then sign in with Outline. Their Outline name becomes their dabei name (an existing name with the same spelling is linked on first login), and they choose their own color. `/settings` keeps its own `ADMIN_PASSWORD`.
-
-## Development
-
-```sh
-bun install
-cp .env.example .env     # optionally set ADMIN_PASSWORD
-bun run dev               # migrations run automatically on start
-# optional: bun run db:seed  (3 placeholder members)
-```
-
-Open `/styleguide` to see the design tokens and components. After changing `src/lib/server/db/schema.ts`, run `bun run db:generate` and commit the new migration in `drizzle/`. It is applied automatically the next time the server starts.
-
-## Deploy with Docker
-
-Every push to `main` builds an image (amd64 and arm64) with GitHub Actions and publishes it to `ghcr.io/melihsd/dabei` (tags: `latest`, the commit SHA, and `vX.Y.Z` for version tags). Pull requests only check that the image builds. If the package is private, make it public under the repository's _Packages_ settings, or log in with `docker login ghcr.io`.
-
-Run the published image with Compose:
+## Quick start
 
 ```sh
 export ADMIN_PASSWORD=change-me
@@ -67,11 +32,61 @@ export COOKIE_SECRET=$(openssl rand -hex 32)
 docker compose pull && docker compose up -d     # http://localhost:3000
 ```
 
-Or build locally:
+Then open `/settings`, sign in with the admin password and add your team's names – or let people add themselves.
+
+## Configuration
+
+Copy `.env.example` to `.env` and fill it in. `.env` is never committed.
+
+| Variable              | Required | Description                                                                                        |
+| --------------------- | -------- | -------------------------------------------------------------------------------------------------- |
+| `DATABASE_URL`        | no       | Path to the SQLite file, e.g. `./data/dabei.db`                                                    |
+| `ADMIN_PASSWORD`      | no       | Password for `/settings`. If empty, password login is disabled                                     |
+| `COOKIE_SECRET`       | no       | Signs admin and login cookies. If empty, a temporary one is generated per start and logged         |
+| `OUTLINE_URL`         | no       | Base URL of your Outline instance. Outline login is on once all four `OUTLINE_*`/`OAUTH_*` are set |
+| `OAUTH_CLIENT_ID`     | no       | Outline OAuth client ID                                                                            |
+| `OAUTH_CLIENT_SECRET` | no       | Outline OAuth client secret                                                                        |
+| `OAUTH_REDIRECT_URI`  | no       | `https://your-dabei-host/auth/callback`                                                            |
+| `PORT`                | no       | Published port in Compose (default `3000`)                                                         |
+
+## Login with Outline (optional)
+
+By default there are no accounts: people pick a name. If you run Outline, you can require a login with it instead:
+
+1. In Outline, create an OAuth client (Settings → Applications) with the redirect URI `https://your-dabei-host/auth/callback`.
+2. Set `OUTLINE_URL`, `OAUTH_CLIENT_ID`, `OAUTH_CLIENT_SECRET` and `OAUTH_REDIRECT_URI`. Login switches on automatically; there is no toggle.
+
+People then sign in with Outline. Their Outline name becomes their dabei name (an existing name with the same spelling is linked on first login), and they choose their own color. Outline admins can open `/settings`; without Outline login, `/settings` is protected by `ADMIN_PASSWORD`.
+
+In `/settings` you can restrict login to one Outline group. Membership is checked at login only, sessions last 7 days. To shut someone out right away, remove them in dabei too.
+
+## Development
 
 ```sh
-export ADMIN_PASSWORD=change-me
-export COOKIE_SECRET=$(openssl rand -hex 32)
+bun install
+cp .env.example .env
+bun run dev               # migrations run automatically on start
+bun run db:seed           # optional: 3 placeholder members
+```
+
+| Command               | What it does                                   |
+| --------------------- | ---------------------------------------------- |
+| `bun run dev`         | Start the dev server                           |
+| `bun run build`       | Production build                               |
+| `bun run check`       | Type-check with svelte-check                   |
+| `bun run lint`        | Prettier and ESLint                            |
+| `bun run db:generate` | Generate a migration after changing the schema |
+| `bun run db:studio`   | Browse the database with Drizzle Studio        |
+
+Open `/styleguide` to see the design tokens and components. After changing `src/lib/server/db/schema.ts`, run `bun run db:generate` and commit the new migration in `drizzle/`. It is applied automatically the next time the server starts. More background is in [docs/project.md](docs/project.md).
+
+## Deployment
+
+Every push to `main` builds an image (amd64 and arm64) with GitHub Actions and publishes it to `ghcr.io/melihsd/dabei` (tags: `latest`, the commit SHA, and `vX.Y.Z` for version tags). Pull requests only check that the image builds. If the package is private, make it public under the repository's _Packages_ settings, or log in with `docker login ghcr.io`.
+
+Build locally with Compose:
+
+```sh
 docker compose up -d --build
 ```
 
@@ -84,12 +99,13 @@ docker run -d --name dabei -p 3000:3000 \
   -v dabei-data:/app/data dabei
 ```
 
+Good to know:
+
 - The SQLite file lives in `/app/data`. Mount a volume there and include it in your backups.
-- Migrations run automatically on every start. Add names in `/settings` after signing in with `ADMIN_PASSWORD`, or let people add themselves.
-- `PORT` (default 3000) changes the published port in Compose. The image has a health check.
+- Migrations run automatically on every start. The image has a health check.
 - It works on plain http and behind a reverse proxy (form posts are accepted when the `Origin` host matches the `Host` or `X-Forwarded-Host` header). Put a TLS proxy in front if it's reachable from the internet.
-- The app has no login for regular use. If the URL is public, protect it with Basic Auth at the proxy.
+- Without Outline login there is no authentication for regular use. If the URL is public, protect it with Basic Auth at the proxy.
 
 ## License
 
-MIT
+[MIT](LICENSE)
