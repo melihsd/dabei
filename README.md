@@ -22,7 +22,7 @@ A small self-hosted planner for teams. Everyone marks when they're in – full d
 
 ## Stack
 
-Bun · SvelteKit (Svelte 5) · Tailwind CSS v4 · bits-ui · SQLite (`bun:sqlite`) with Drizzle ORM · Docker Compose
+Bun · SvelteKit (Svelte 5) · Shadcn-Svelte · SQLite (`bun:sqlite`) with Drizzle ORM · Docker Compose
 
 ## Quick start
 
